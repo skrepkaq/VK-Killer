@@ -14,6 +14,8 @@
 
 ## Установка
 
+### Из-за бага в Python, не работает на версии 3.10, используйте более ранние!
+
 1. Установите [Docker](https://www.docker.com/)
 2. Создайте и активируйте [venv](https://docs.python.org/3/library/venv.html)
 3. Используя [pip](https://pip.pypa.io/en/stable/) установите библиотеки из **requirements.txt**.
