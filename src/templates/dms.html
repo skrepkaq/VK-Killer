@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}
+Ваши сообщения
+{% endblock %}
+
+
+{% block body %}
+{% include "navbar.html" %}
+{% if dms %}
+<p>
+<table id="msgs-table">
+    {% for dm in dms %}
+        <tr>
+            <th rowspan="2"><a href="/dm/{{dm.user.id}}"><img class="avatar small" src="{{dm.user.avatar}}"></a></th>
+            <th class="user"><a href="/dm/{{dm.user.id}}">{{dm.user.username}} <a class="timestamp">{{dm.message.time}}</a></a></th>
+        </tr>
+        <tr><th class="msg">{{dm.message.username}}: {{dm.message.content}}</th></tr>
+    {% endfor %}
+</table>
+</p>
+{% endif %}
+{% endblock %}

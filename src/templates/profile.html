@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}
+{% if profile_user == user %}Ваш профиль{% else %}Профиль {{profile_user}}{% endif %}
+{% endblock %}
+
+
+{% block body %}
+{% include "navbar.html" %}
+
+<table>
+    <tr><th><h3>{{profile_user}}</h3><br></th></tr>
+    <tr><th><img class="avatar" src="{{profile_user.avatar.url}}"></th></tr>
+    {% if not profile_user == user and user.is_authenticated %}
+        <tr><th><a href="/dm/{{profile_user.id}}"><button>Написать сообщение</button></a></th></tr>
+        <tr><th>
+        {% if not user in offer_accepted_users %}
+            <form method="POST" action="">
+                {% csrf_token %}
+                <button type="submit" name="action" value="add_friend">Добавить в друзья</button>
+            </form>
+            </th></tr>
+            <tr><th>
+            {% if profile_user in offer_accepted_users %}
+                <small>Пользователь подписан на вас</small>
+            {% endif %}
+        {% elif profile_user in offer_accepted_users %}
+            <small>Пользователь у вас в друзьях</small>
+        {% else %}
+            <small>Заявка в друзья отправлена</small>
+        {% endif %}
+        </th></tr>
+    {% endif %}
+    {% if friends %}
+        <tr><th><a class="link-text" href="/friends/{{profile_user.id}}">Друзей: {{friends_count}}</a><br></th></tr>
+        <tr><th>
+        <table>
+            <tr>
+                {% for fr in friends %}
+                    <th><a href="/profile/{{fr.id}}"><img class="avatar small" src="{{fr.avatar.url}}"><br>
+                        <a href="/profile/{{fr.id}}" class="link-text nickname-small">{{fr}}</a></a></th>
+                {% endfor %}
+            </tr>
+        </table></th></tr>
+    {% endif %}
+</table>
+{% endblock %}

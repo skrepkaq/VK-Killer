@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}
+Register page
+{% endblock %}
+
+
+{% block body %}
+<section class="auth_form">
+    <h2>Welcome to the club, buddy!</h2>
+    <form method="POST" action="">
+        {% csrf_token %}
+        {{form.username}}
+        {{form.email}}
+        {{form.password1}}
+        {{form.password2}}
+        <input type="submit" value="Register">
+    </form>
+    {% if form.errors %}
+    <div class="error">
+        {% for field in form %}
+            {% for error in field.errors %}
+                <strong>{{ error|escape }}</strong><br>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    <p>Already have an account? <a href="../login">Log in</a> now!</p>
+</section>
+{% endblock %}

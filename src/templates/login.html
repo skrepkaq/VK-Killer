@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}
+Login page
+{% endblock %}
+
+
+{% block body %}
+<section class="auth_form">
+    <h2>Welcome to the club, buddy!</h2>
+    <form method="POST" action="">
+        {% csrf_token %}
+        {{form.username}}
+        {{form.password}}
+        <input type="submit" value="Login">
+    </form>
+    {% if messages %}
+    <p class="error">
+        {% for msg in messages %}
+        <a>{{msg}}</a>
+        {% endfor %}
+    </p>
+    {% endif %}
+    <p>Don't have an account? <a href="../register">Register</a> now!</p>
+</section>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}
+{% if my %}Ваши друзья{% else %}Друзья {{profile_user}}{% endif %}
+{% endblock %}
+
+
+{% block body %}
+{% include "navbar.html" %}
+{% include "users.html" %}
+{% endblock %}

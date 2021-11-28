@@ -1,0 +1,26 @@
+<header>
+    {% if user.is_authenticated %}
+        <nav>
+            <ul class="nav_links left">
+                <li><a href="/profile">Мой профиль</a></li>
+                <li><a href="/dm">Сообщения</a></li>
+                <li><a href="/settings">Настройки</a></li>
+                <li><a href="/friends">Друзья</a></li>
+                <li><a href="/search">Поиск</a></li>
+            </ul>
+        </nav>
+        <nav>
+            <ul class="nav_logout">
+                <li><a>Hello, {{user}}</a></li>
+                <li><a href="/logout"><button>Выйти</button></a></li>
+            </ul>
+        </nav>
+    {% else %}
+        <nav>
+            <ul class="nav_links">
+                <li><a href="/login"><button>Войти</button></a></li>
+                <li><a href="/register"><button>Регистрация</button></a></li>
+            </ul>
+        </nav>
+    {% endif %}
+</header>

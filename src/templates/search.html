@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}
+Search
+{% endblock %}
+
+
+{% block body %}
+{% include "navbar.html" %}
+<section class="search_form">
+    <form method="POST" action="">
+        {% csrf_token %}
+        <input type="text" name="search" required placeholder="Search">
+        <input type="submit" value="Найти">
+    </form>
+    {% include "users.html" %}
+</section>
+{% endblock %}
