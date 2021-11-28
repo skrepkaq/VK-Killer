@@ -1,8 +1,14 @@
-version: '3'
+version: '3.8'
 
 
 services:
   redis:
     image: redis
     ports:
-    - "6379:6379"
+    - 6379:6379
+  app:
+    build:
+      context: .
+    command: bash -c "cd src && python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - 80:8000

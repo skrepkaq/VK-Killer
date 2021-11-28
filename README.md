@@ -12,7 +12,16 @@
 А так же [Docker](https://www.docker.com/) для запуска Redis
 
 
-## Установка
+## Production
+1. Установите [Docker](https://www.docker.com/)
+2. Запустите контейнер
+```shell
+docker-compose up
+```
+3. Заходите на [http://localhost](http://localhost)
+
+
+## Development
 
 ### Из-за бага в Python, не работает на версии 3.10, используйте более ранние!
 
@@ -22,22 +31,18 @@
 ```bash
 pip install -r requirements.txt
 ```
-4. Мигрируйте базу данных с помощью файла **manage.py** из директории **src** ***(следует делать после каждого нового коммита)***
+4. Мигрируйте базу данных с помощью файла **manage.py** из директории **src** ***(следует делать после каждого изменения моделей бд `models.py`)***
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
-
-## Использование
-
-1. Запустите Redis с помощью Docker
+5. Запустите Redis с помощью Docker
 ```bash
-docker-compose up
+docker-compose up redis
 ```
-2. Запустите сервер:
-
+6. Запустите сервер:
 ```bash
 python manage.py runserver
 ```
-3. Заходите на [http://localhost:8000](http://localhost:8000)
-4. Profit!
+7. Заходите на [http://localhost:8000](http://localhost:8000)
+8. Profit!
