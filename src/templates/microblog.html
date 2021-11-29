@@ -1,0 +1,25 @@
+{% load static %}
+<div style="overflow-y: scroll; height:700px; width: 100%" id="posts-box">
+    <table>
+        {% for post in posts %}
+            <table>
+                <tr>
+                    <th rowspan="2"><img class="avatar small" src="{{post.user.avatar}}"></th>
+                    <th>{% if post.image %}<img class="post-image" src="{{post.image.url}}">{% endif %}</th>
+                </tr>
+                <tr>
+                    <th><a>{{post.message}} </a><a class="timestamp">{{post.time}}</a></th>
+                    <th>
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="like_{{post.id}}">
+                                <img class="avatar tiny" src="{% static 'images/like' %}{% if user in post.likes %}_pressed{% endif %}.png">
+                            </button>
+                        </form>
+                        <a class="nickname-small">Likes</a> {{ post.likes|length }}
+                    </th>
+                </tr>
+            </table>
+        {% endfor %}
+    </table>
+</div>

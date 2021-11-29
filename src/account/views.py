@@ -1,9 +1,9 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from .forms import AccountCreateForm, AccountLoginForm
-from .services import account, profile, dms, friends, search
+from .services import account, profile, dms, friends, search, posts
 from .decorators import unauth_user
 
 
@@ -43,13 +43,22 @@ def profile_view(request, id):
     if not profile_user:
         return HttpResponse('<h3>404</h3>')
 
+    is_post_created = posts.create(request)
+    is_liked = posts.like(request)
+
+    if is_post_created or is_liked:
+        # если добавлен пост или лайк - перезагрузит страницу что бы сбросить post запрос (хз как это ещё сделать)
+        return HttpResponseRedirect(f'/profile/{id}')
+
     accepted = profile.offer(request, profile_user)
     fr, k = friends.get_random_accepted(profile_user, k=3)
+    psts = posts.get_all(profile_user)
 
     context = {'profile_user': profile_user,
                'offer_accepted_users': accepted,
                'friends': fr,
-               'friends_count': k}
+               'friends_count': k,
+               'posts': psts}
     return render(request, 'profile.html', context)
 
 
