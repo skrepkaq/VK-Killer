@@ -3,7 +3,7 @@ import os
 import secrets
 import time
 from PIL import Image
-from account.models import Post
+from account.models import Account, Post
 
 
 path = 'media/images/'
@@ -11,7 +11,7 @@ if not os.path.exists(path):
     os.makedirs(path)
 
 
-def get_all(user: int) -> list[Post]:
+def get_all(user: Account) -> list[Post]:
     '''Возвращает все посты пользователя'''
     return [{'user': {'id': p.user.id,
                       'username': p.user.username,
