@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from .forms import AccountCreateForm, AccountLoginForm
-from .services import account, profile, dms, friends, search, posts
+from .services import account, profile, dms, friends, search, posts, account_settings, avatar
 from .decorators import unauth_user
 
 
@@ -111,3 +111,15 @@ def dms_view(request):
     dm = dms.get_with_message(request.user)
 
     return render(request, 'dms.html', {'dms': dm})
+
+
+@login_required(login_url='login')
+def settings_view(request):
+    password_form, is_password_changed = account_settings.change_password(request)
+    is_avatar_updated = avatar.update(request)
+
+    if is_password_changed or is_avatar_updated:
+        return redirect('settings')
+
+    context = {'password_form': password_form if request.method == 'POST' else None}
+    return render(request, 'settings.html', context)

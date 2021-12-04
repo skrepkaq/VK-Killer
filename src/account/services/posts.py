@@ -1,9 +1,7 @@
-import io
 import os
-import secrets
 import time
-from PIL import Image
 from account.models import Account, Post
+from account.services import images
 
 
 path = 'media/images/'
@@ -35,9 +33,9 @@ def create(request) -> bool:
 
             image_fin_str = ''
             if image:
-                if image.size > 10485760:
+                if image.size > 20971520:
                     return False
-                filename = _image_save(image.read())
+                filename = images.save(image.read(), path, 'image', 500)
                 if not filename:
                     return False
                 image_fin_str = 'images/' + filename
@@ -58,23 +56,3 @@ def like(request) -> bool:
                 post.likes.add(request.user)
             return True
     return False
-
-
-def _image_save(image_bytes: bytes) -> str:
-    '''
-    Подгоняет размер картинки и сохраняет её.
-    Возвращает имя файла
-    '''
-    try:
-        image = Image.open(io.BytesIO(image_bytes))
-        width, height = image.size
-        scale = 500/max(image.size)  # максимальный размер картинки 500x500px
-        size = (int(width*scale), int(height*scale))
-        print(scale, size)
-        if scale < 1:
-            image = image.resize(size, Image.ANTIALIAS)
-        filename = secrets.token_hex(16) + '.jpg'
-        image.convert('RGB').save(path + filename, optimize=True, quality=75)
-        return filename
-    except Exception:
-        return None

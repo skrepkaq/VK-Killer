@@ -25,7 +25,7 @@ input[type=submit] {
 }
 
 form {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     gap: 0.5em;
 }
@@ -201,6 +201,30 @@ img.avatar.tiny {
     height: 35px;
 }
 
-.profile-container div.padd {
+div.padd {
     padding: 10px;
+}
+
+div.padd {
+    padding-top: 20px;
+}
+
+.settings-container {
+    display: grid;
+
+    gap: 10px;
+
+    grid-template-columns: 1fr 3fr;
+}
+
+.avatar-container {
+    text-align: center;
+}
+
+/* .settings {
+    background: #c3c5d1;
+} */
+
+form.full {
+    display: flex;
 }

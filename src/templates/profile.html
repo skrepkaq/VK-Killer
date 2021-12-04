@@ -74,13 +74,13 @@
     <div class="new-post padd">
         {% if profile_user == user %}
             <img id="preview_image">
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" class="full">
                 {% csrf_token %}
                 <a>Опубликовать новый пост</a>
                 <input type="text" name="message" placeholder="Сообщение">
                 <input id="photo_input" type="file" name="image" style="display: none">
                 <button type="submit" name="action" value="create_post">Опубликовать</button>
-                <label for="photo_input"><img class="avatar small" src="{% static 'images/image.png' %}"><br>Добавить фото (не больше 10МБ)</label>
+                <label for="photo_input"><img class="avatar small" src="{% static 'images/image.png' %}"><br>Добавить фото (не больше 20МБ)</label>
             </form>
         {% endif %}
     </div>

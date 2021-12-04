@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Настройки
+{% endblock %}
+
+
+{% block body %}
+{% include "navbar.html" %}
+<div class="settings-container">
+    <div class="avatar-container padd">
+        <h3>{{user}}</h3>
+        <img class="avatar" src="{{user.avatar.url}}"><br>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="photo_input">Изменить аватарку<br>
+                <img class="like-image" style="vertical-align: middle;" src="{% static 'images/image.png' %}"> <button type="submit" name="action" value="change_avatar">Применить</button></label>
+            <input id="photo_input" type="file" name="image" style="display: none">
+            
+        </form>
+        {% if messages %}
+        <p class="error">
+            {% for msg in messages %}
+            <a>{{msg}}</a>
+            {% endfor %}
+        </p>
+        {% endif %}
+    </div>
+    <div class="settings padd">
+        <h2 class="padd-top">Настройки акканта:</h2>
+        <div class="passwors-change padd-top" style="padding-top: 70px">
+            <p>Изменить пароль</p>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <input type="password" name="old_password" autocomplete="current-password" autofocus required id="id_old_password" size=30 placeholder="Старый пароль">
+                <input type="password" name="new_password1" autocomplete="new-password" required id="id_new_password1" size=30 placeholder="Новый пароль">
+                <input type="password" name="new_password2" autocomplete="new-password" required id="id_new_password2" size=30 placeholder="Повторите новый пароль">
+                <button type="submit" name="action" value="change_password">Применить</button>
+                {% if password_form.errors %}
+                <div class="error">
+                    {% for field in password_form %}
+                        {% for error in field.errors %}
+                            <strong>{{ error|escape }}</strong><br>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

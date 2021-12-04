@@ -1,10 +1,13 @@
 import os
 import hashlib
 from PIL import Image
+from django.contrib import messages
+from account.services import images
 
 
-if not os.path.exists('media/avatars/defaults/'):
-    os.makedirs('media/avatars/defaults/')
+path = 'media/avatars/'
+if not os.path.exists(path + 'defaults/'):
+    os.makedirs(path + 'defaults/')
 
 
 def create(username: str) -> str:
@@ -12,12 +15,11 @@ def create(username: str) -> str:
     Создаёт и сохраняет аватарку с цветом, зависящим от ника.
     Возвращает имя файла
     '''
-    img = Image.open("media/avatars/template.png")
+    img = Image.open(path + 'template.png')
     img = img.convert("RGB")
 
     color = _get_color(username)
     file_name = ' '.join(map(str, color)) + '.png'
-    print(f'create for {username} {file_name}')
 
     new_image_data = []
     for item in img.getdata():
@@ -27,7 +29,7 @@ def create(username: str) -> str:
             new_image_data.append(item)
 
     img.putdata(new_image_data)
-    img.save('media/avatars/defaults/' + file_name)
+    img.save(path + 'defaults/' + file_name)
     return file_name
 
 
@@ -45,3 +47,29 @@ def _get_color(username: str) -> tuple[int]:
             color[i], color[ran_n] = color[ran_n], color[i]  # поменять местами два случайных значения
 
     return tuple(color)
+
+
+def update(request) -> bool:
+    '''
+    Обрабатывает и сохраняет аватарку пользователю.
+    Возвращает True если была попытка изменить аватарку
+    '''
+    if request.method == 'POST':
+        if request.POST['action'] == "change_avatar":
+            image = request.FILES.get('image')
+            if image:
+                print(image.content_type)
+                if image.content_type.startswith('image/'):
+                    if image.size < 20971520:
+                        filename = images.save(image.read(), path, 'avatar', 300)
+                        if filename:
+                            request.user.avatar = 'avatars/' + filename
+                            request.user.save()
+                        else:
+                            messages.error(request, 'Файл повреждён')
+                    else:
+                        messages.error(request, 'Изображене должно быть меньше 20МБ')
+                else:
+                    messages.error(request, 'Неверный формат изображения')
+            return True
+    return False
