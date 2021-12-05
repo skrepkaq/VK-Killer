@@ -102,6 +102,7 @@ def friends_view(request, id):
 
     is_my_friends = request.user == profile_user
     users = friends.get(profile_user, not is_my_friends)  # Если профиль мой - кроме друзей показать заявки в друзья
+    users.sort(key=lambda x: x["is_accepted"])  # Заявки в друзья выше - друзья ниже
     context = {'users': users, 'my': is_my_friends, 'profile_user': profile_user}
     return render(request, 'friends.html', context)
 
@@ -109,6 +110,7 @@ def friends_view(request, id):
 @login_required(login_url='login')
 def dms_view(request):
     dm = dms.get_with_message(request.user)
+    dm.sort(key=lambda x: x["message"]["id"], reverse=True)  # сортировать переписки по последнему сообщению
 
     return render(request, 'dms.html', {'dms': dm})
 

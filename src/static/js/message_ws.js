@@ -1,7 +1,8 @@
 const profile_user_id = JSON.parse(document.getElementById('profile_user_id').textContent);
 const box = document.querySelector('#messages-box')
 const form = document.querySelector("#send-message")
-const socket = new WebSocket(`ws://${window.location.host}/ws/messages/${profile_user_id}`);
+const ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+const socket = new WebSocket(`${ws_scheme}://${window.location.host}/ws/messages/${profile_user_id}`);
 var loaded, requested_more_messages, end_of_dm;
 var box_max_scroll;
 var messages = [];
