@@ -24,5 +24,5 @@ class AccountLoginForm(AuthenticationForm):
 
     def __init__(self, *args, **kwargs):
         super(AccountLoginForm, self).__init__(*args, **kwargs)
-    username = UsernameField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email'}))
+    username = UsernameField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Логин или email'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Пароль'}))
