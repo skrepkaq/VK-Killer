@@ -1,11 +1,14 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Murecho&display=swap" rel="stylesheet">
 <header>
     {% if user.is_authenticated %}
         <nav>
             <ul class="nav_links left">
                 <li><a href="/profile">Мой профиль</a></li>
                 <li><a href="/dm">Сообщения</a></li>
-                <li><a href="/settings">Настройки</a></li>
                 <li><a href="/friends">Друзья</a></li>
+                <li><a href="/settings">Настройки</a></li>
                 <li><a href="/search">Поиск</a></li>
             </ul>
         </nav>

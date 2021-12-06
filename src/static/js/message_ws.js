@@ -6,7 +6,7 @@ const socket = new WebSocket(`${ws_scheme}://${window.location.host}/ws/messages
 var loaded, requested_more_messages, end_of_dm;
 var box_max_scroll;
 var messages = [];
-
+var myID;
 
 
 socket.onmessage = (e) => {
@@ -17,6 +17,16 @@ socket.onmessage = (e) => {
         showMessages()
         requested_more_messages = false;
         if (data.messages.length === 0) end_of_dm = true; //больше сообщений нет - конец переписки
+    } else if ('readMsg' in data) {
+        for (let i = 0; i < messages.length; i++) {
+            if ((messages[i].message.id == data.readMsg || (data.readMsg === -1 && data.byUserID != myID)) && !messages[i].message.read) {
+                //если пришло -1 - отметить все сообщения как прочитанные, иначе только с нужным id
+                messages[i].message.read = true
+            }
+        }
+        showMessages()
+    } else if ('yourID' in data) {
+        myID = data.yourID
     }
 }
 
@@ -65,37 +75,46 @@ box.addEventListener('scroll', function(e) {
 const showMessages = () => {
     // выводит сообщения на страницу
     messages.sort((a, b) => a.message.id - b.message.id) // отсортировать сообщения по id
-    let table = document.querySelector('#msgs-table')
-    table.innerHTML = "" // удалить все старые сообщения
+    let boxdiv = document.querySelector('#messages-box')
+    boxdiv.innerHTML = "" // удалить все старые сообщения
 
     for (let i = 0; i < messages.length; i++) {
         let msg = messages[i]
-        let tr1 = document.createElement('tr')
-        let tr2 = document.createElement('tr')
-        let thAvatar = document.createElement('th')
-        let thUser = document.createElement('th')
-        let thMessage = document.createElement('th')
+        let mdiv = document.createElement('div')
+        let divAvatar = document.createElement('div')
+        let divUser = document.createElement('div')
+        let divMessage = document.createElement('div')
         let img = document.createElement('img')
         let aTime = document.createElement('a')
+        let aImg = document.createElement('a')
+        let aUsername = document.createElement('a')
 
-        thAvatar.setAttribute('rowspan', "2")
+        mdiv.classList.add("message")
         img.classList.add("avatar", "small")
         img.setAttribute('src', `${msg.user.avatar}`)
+        aUsername.setAttribute('href', `/profile/${msg.user.id}`)
+        aImg.setAttribute('href', `/profile/${msg.user.id}`)
         aTime.classList.add("timestamp")
-        thMessage.classList.add("msg")
-        thUser.classList.add("user")
+        divMessage.classList.add("msg")
+        divUser.classList.add("user")
+        divAvatar.classList.add("divavatar")
+        if (!msg.message.read && msg.user.id === myID) {
+            mdiv.classList.add("unread")
+        }
         aTime.textContent = msg.message.time
-        thUser.textContent = `${msg.user.username} `
-        thMessage.textContent = msg.message.content
+        aUsername.textContent = `${msg.user.username} `
+        divMessage.textContent = msg.message.content
+        aImg.appendChild(img)
 
-        thUser.appendChild(aTime)
-        thAvatar.appendChild(img)
+        divUser.appendChild(aUsername)
+        divUser.appendChild(aTime)
+        divAvatar.appendChild(aImg)
 
-        tr1.appendChild(thAvatar)
-        tr1.appendChild(thUser)
-        tr2.appendChild(thMessage)
-        table.appendChild(tr1);
-        table.appendChild(tr2);
+        mdiv.appendChild(divAvatar)
+        mdiv.appendChild(divUser)
+        mdiv.appendChild(divMessage)
+
+        boxdiv.appendChild(mdiv);
     }
 
     let old_max_scorll = box_max_scroll

@@ -36,10 +36,10 @@ form {
 
 header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-evenly;
     align-items: center;
-    padding: 10px 30%;
-    background: #000000AA;
+    padding: 10px 10%;
+    background: #353642;
 }
 
 * {
@@ -59,7 +59,7 @@ header {
 }
 
 .left li {
-    margin-right: auto;
+    margin-left: auto;
 }
 
 img.avatar {
@@ -102,6 +102,16 @@ img.avatar.tiny {
 }
 
 #msgs-table a {
+    text-decoration: none;
+    color:black;
+}
+
+#messages-box .user {
+    font-weight: bolder;
+    padding-top: 12px;
+}
+
+#messages-box a {
     text-decoration: none;
     color:black;
 }
@@ -227,4 +237,61 @@ div.padd {
 
 form.full {
     display: flex;
+}
+
+nav a {
+    text-decoration: none;
+    font-family: 'Murecho', sans-serif;
+}
+
+.nav_links a {
+    color: #cbcbcb;
+}
+
+.nav_logout a {
+    color: #999595;
+}
+
+#messages-box div.message {
+    display: grid;
+
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 50px 1fr;
+
+    column-gap: 10px;
+}
+
+.divavatar {
+    grid-row: 1 / span 2;
+}
+
+.msg {
+    grid-column-start: 2;
+}
+
+#messages-box div.message div {
+    padding: 5px 0px 0px 10px;
+    text-decoration: none;
+    color:black;
+    vertical-align: middle;
+}
+
+.unread {
+    background: #e7e4e4;
+}
+
+#messages-box {
+    overflow-y: scroll;
+}
+
+#messages-box div.message.list {
+    grid-template-columns: 50px fit-content(60%) 20px;
+}
+
+.marker {
+    grid-column-start: 3;
+    grid-row: 1 / span 2;
+    color: #e93737c2 !important;
+    font-size: x-large;
+    padding-top: 20px !important;
 }

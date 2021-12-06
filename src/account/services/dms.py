@@ -18,7 +18,8 @@ def get_with_message(user: Account) -> list[dict]:
                              'message': {'id': msg.id,
                                          'username': msg.user.username,
                                          'time': time.strftime("%H:%M", msg.timestamp.timetuple()),
-                                         'content': msg.message}})
+                                         'content': msg.message,
+                                         'read': msg.read}})
     return dms_with_msg
 
 

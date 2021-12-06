@@ -7,16 +7,17 @@
 {% block body %}
 {% include "navbar.html" %}
 {% if dms %}
-<p>
-<table id="msgs-table">
+<div id="messages-box">
     {% for dm in dms %}
-        <tr>
-            <th rowspan="2"><a href="/dm/{{dm.user.id}}"><img class="avatar small" src="{{dm.user.avatar}}"></a></th>
-            <th class="user"><a href="/profile/{{dm.user.id}}">{{dm.user.username}} <a class="timestamp">{{dm.message.time}}</a></a></th>
-        </tr>
-        <tr><th class="msg">{{dm.message.username}}: {{dm.message.content}}</th></tr>
+    <div class="message list">
+        <div class="divavatar"><a href="/dm/{{dm.user.id}}"><img class="avatar small" src="{{dm.user.avatar}}"></a></div>
+        <div class="user"><a href="/profile/{{dm.user.id}}">{{dm.user.username}} <a class="timestamp">{{dm.message.time}}</a></a></div>
+        <div class="msg">{{dm.message.username}}: {{dm.message.content}}</div>
+        {% if dm.message.username != user.username and not dm.message.read %}
+        <div class="marker">●</div>
+        {% endif %}
+    </div>
     {% endfor %}
-</table>
-</p>
+</div>
 {% endif %}
 {% endblock %}

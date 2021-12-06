@@ -1,4 +1,5 @@
 from django.db.models import Count
+from django.db.models import Q
 from channels.db import database_sync_to_async
 from account.models import Dm, Message, Account
 
@@ -28,7 +29,7 @@ def get_or_create_dm(user: Account, profile_user: Account) -> Dm:
 
 
 @database_sync_to_async
-def get_messages(dm: Dm, last_msg_id: int) -> list[Message]:
+def get_messages(user: Account, dm: Dm, last_msg_id: int) -> list[Message]:
     '''
     Возвращает список сообщений в переписке.
     Если last_msg_id == -1, последних 30, иначе - сообщений с id меньше чем last_msg_id
@@ -36,6 +37,9 @@ def get_messages(dm: Dm, last_msg_id: int) -> list[Message]:
     '''
     num = 20  # Количество сообщений загружаемых за раз
     msgs = Message.objects.filter(dm=dm).order_by('-id')
+    msgs.filter(Q(read=False) & ~Q(user=user)).update(read=True)
+    # если переписка открыта - отметить все сообщения как прочитанные
+
     if last_msg_id > 0:
         msgs = msgs.filter(id__lt=last_msg_id)
     else:
@@ -49,3 +53,11 @@ def get_messages(dm: Dm, last_msg_id: int) -> list[Message]:
 def create(user: Account, dm: Dm, content: str) -> Message:
     '''Создаёт, сохраняет и возвращает новое сообщение'''
     return Message.objects.create(user=user, dm=dm, message=content)
+
+
+@database_sync_to_async
+def mark_read(id: int) -> None:
+    '''Отмечает сообщение прочитанным по id'''
+    msg = Message.objects.get(pk=id)
+    msg.read = True
+    msg.save()

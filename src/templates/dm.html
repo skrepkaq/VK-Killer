@@ -7,13 +7,11 @@
 
 {% block body %}
 {% include "navbar.html" %}
-<div style="overflow-y: scroll; height:800px;" id="messages-box">
-    <table id="msgs-table">
-    </table>
+<div id="messages-box" style="height: 800px;">
 </div>
 <section class="msg_form">
     <form class="full">
-        <input type="text" id="message" name="msg" required placeholder="Сообщение">
+        <input type="text" id="message" name="msg" required placeholder="Сообщение" autofocus autocomplete="off">
         <input type="submit" id="send-message" value="Send">
     </form>
 </section>
