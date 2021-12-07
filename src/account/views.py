@@ -44,10 +44,11 @@ def profile_view(request, id):
         return HttpResponse('<h3>404</h3>')
 
     is_post_created = posts.create(request)
+    is_post_deleted = posts.delete(request)
     is_liked = posts.like(request)
 
-    if is_post_created or is_liked:
-        # если добавлен пост или лайк - перезагрузит страницу что бы сбросить post запрос (хз как это ещё сделать)
+    if is_post_created or is_liked or is_post_deleted:
+        # если добавлен/удалён пост или лайк - перезагрузит страницу что бы сбросить post запрос
         return HttpResponseRedirect(f'/profile/{id}')
 
     accepted = profile.offer(request, profile_user)

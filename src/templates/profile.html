@@ -63,6 +63,22 @@
                     </button>
                 </form>
                 <a class="nickname-small">Likes</a> {{ post.likes|length }}
+                {% if profile_user == user %}
+                <div class="delete-post">
+                    <div class="pre-delete">
+                        <a class="delete-button"><img class="avatar tiny" src="{% static 'images/cross.png' %}"></a>
+                    </div>
+                    <div class="delete hide">
+                        Удалить<br>пост?
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="delete_post_{{post.id}}">
+                                <img class="avatar tiny" src="{% static 'images/cross.png' %}">
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
             </div>
             <div class="message">
                 <a>{{post.message}} </a><a class="timestamp">{{post.time}}</a>

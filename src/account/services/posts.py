@@ -24,7 +24,7 @@ def get_all(user: Account) -> list[Post]:
 def create(request) -> bool:
     '''
     Проверяет картинку на размер, валидность, сжимает и сохраняет её.
-    Создаёт пост и в случаае успеха возвращает True
+    Создаёт пост и в случае успеха возвращает True
     '''
     if request.method == 'POST':
         if request.POST['action'] == "create_post":
@@ -43,12 +43,27 @@ def create(request) -> bool:
             return True
 
 
+def delete(request) -> bool:
+    '''Удаляет пост. В случае успеха возвращает True'''
+    if request.method == 'POST':
+        if request.POST['action'].startswith('delete_post'):
+            post_id = request.POST['action'].split('_')[2]
+            try:
+                post = Post.objects.get(pk=post_id, user=request.user)
+            except Post.DoesNotExist:
+                return False
+            post.delete()
+
+
 def like(request) -> bool:
     '''Ставит или убирает лайк с поста. Возвращает True в случае успеха'''
     if request.method == 'POST':
         if request.POST['action'].startswith('like'):
             post_id = request.POST['action'].split('_')[1]
-            post = Post.objects.get(pk=post_id)
+            try:
+                post = Post.objects.get(pk=post_id)
+            except Post.DoesNotExist:
+                return False
 
             if request.user in post.likes.all():
                 post.likes.remove(request.user)

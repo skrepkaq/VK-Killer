@@ -295,3 +295,11 @@ nav a {
     font-size: x-large;
     padding-top: 20px !important;
 }
+
+.delete-button {
+    cursor: pointer;
+}
+
+.hide {
+    display: none;
+}
