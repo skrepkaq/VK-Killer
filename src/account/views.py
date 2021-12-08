@@ -126,3 +126,18 @@ def settings_view(request):
 
     context = {'password_form': password_form if request.method == 'POST' else None}
     return render(request, 'settings.html', context)
+
+
+def post_view(request, id):
+    post = posts.get(id)
+    if not post:
+        return HttpResponse('<h3>404</h3>')
+
+    is_liked = posts.like(request)
+    is_comment_send = posts.send_comment(request, id)
+
+    if is_liked or is_comment_send:
+        # если комментарий или поставлен лайк - перезагрузит страницу что бы сбросить post запрос
+        return HttpResponseRedirect(f'/post/{id}')
+    context = {'post': post, 'open': True}
+    return render(request, 'post.html', context)

@@ -22,7 +22,7 @@
                             <button type="submit" name="action" value="add_friend">Добавить в друзья</button>
                         </form>
                         {% if profile_user in offer_accepted_users %}
-                            <small>Пользователь подписан на вас</small>
+                            <br><small>Пользователь подписан на вас</small>
                         {% endif %}
                     {% elif profile_user in offer_accepted_users %}
                         <small>Пользователь у вас в друзьях</small>
@@ -48,42 +48,7 @@
     </div>
     <div class="posts" style="overflow-y: scroll;" id="posts-box">
         {% for post in posts %}
-        <div class="post-container">
-            <div class="avatar">
-                <img class="avatar small" src="{{post.user.avatar}}">
-            </div>
-            <div class="image">
-                {% if post.image %}<img class="post-image" src="{{post.image.url}}">{% endif %}
-            </div>
-            <div class="like">
-                <form method="POST" action="">
-                    {% csrf_token %}
-                    <button type="submit" name="action" value="like_{{post.id}}">
-                        <img class="like-image" src="{% static 'images/like' %}{% if user in post.likes %}_pressed{% endif %}.png">
-                    </button>
-                </form>
-                <a class="nickname-small">Likes</a> {{ post.likes|length }}
-                {% if profile_user == user %}
-                <div class="delete-post">
-                    <div class="pre-delete">
-                        <a class="delete-button"><img class="avatar tiny" src="{% static 'images/cross.png' %}"></a>
-                    </div>
-                    <div class="delete hide">
-                        Удалить<br>пост?
-                        <form method="POST" action="">
-                            {% csrf_token %}
-                            <button type="submit" name="action" value="delete_post_{{post.id}}">
-                                <img class="avatar tiny" src="{% static 'images/cross.png' %}">
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-            <div class="message">
-                <a>{{post.message}} </a><a class="timestamp">{{post.time}}</a>
-            </div>
-        </div>
+        {% include "single-post.html" %}
         <br>
         {% endfor %}
     </div>

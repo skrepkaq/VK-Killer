@@ -1,0 +1,66 @@
+{% load static %}
+<div class="post-container">
+    <div class="avatar">
+        <a href="/profile/{{post.user.id}}"><img class="avatar small" src="{{post.user.avatar}}"></a>
+    </div>
+    <div class="image">
+        {% if post.image %}<img class="post-image" src="{{post.image.url}}">{% endif %}
+    </div>
+    <div class="buttons">        
+        <div class="like">
+            <p><a class="nickname-small">Likes</a> {{ post.likes|length }}</p>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <button type="submit" name="action" value="like_post_{{post.id}}">
+                    <img class="like-image" src="{% static 'images/like' %}{% if user in post.likes %}_pressed{% endif %}.png">
+                </button>
+            </form>
+        </div>
+        {% if not open %}
+        <div class="comment-button">
+            <a>{{ post.comments_count }}</a>
+            <a href="/post/{{post.id}}"><img class="avatar tiny" src="{% static 'images/comments.png' %}"></a>
+        </div>
+        {% if profile_user == user %}
+        <div class="delete-post">
+            <div class="pre-delete">
+                <a class="delete-button"><img class="avatar tiny" src="{% static 'images/cross.png' %}"></a>
+            </div>
+            <div class="delete hide">
+                <a>Удалить<br>пост?</a>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="delete_post_{{post.id}}">
+                        <img class="avatar tiny" src="{% static 'images/cross.png' %}">
+                    </button>
+                </form>
+            </div>
+        </div>        
+        {% endif %}
+        {% endif %}
+    </div>
+    <div class="message">
+        <a>{{post.message}} </a><a class="timestamp">{{post.time}}</a>
+    </div>
+    {% if post.comments %}
+    <div class="comments">
+        {% for comm in post.comments %}
+        <div class="comment">
+            <a href="/profile/{{comm.user.id}}"><img class="avatar tiny" src="{{comm.user.avatar.url}}"></a>
+            <a class="link-text" href="/profile/{{comm.user.id}}">{{comm.user}}:</a>
+            <a> {{comm.message}}</a>
+            <div class="comment-like">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="like_comment_{{comm.id}}">
+                        {{comm.likes.username}}
+                        <img class="comment-like-image" src="{% static 'images/like' %}{% if user in comm.likes.all %}_pressed{% endif %}.png">
+                    </button>
+                </form>
+                {{comm.likes.all|length}}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>

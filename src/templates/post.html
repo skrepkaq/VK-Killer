@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Пост {{post.user.username}}
+{% endblock %}
+
+
+{% block body %}
+{% include "navbar.html" %}
+{% include "single-post.html" %}
+<form class="comment-form" method="POST" action="">
+    {% csrf_token %}
+    <input type="text" name="message" required autocomplete="off" size=50 placeholder="Комментарий">
+    <button type="submit" name="action" value="send_comment">Отправить</button>
+</form>
+<script src="{% static 'js/microblog.js' %}"></script>
+{% endblock %}

@@ -80,3 +80,11 @@ class Post(models.Model):
     image = models.ImageField(upload_to='images', blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(Account, blank=True, related_name='likes')
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='comments_likes')
+    message = models.CharField(max_length=500)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(Account, blank=True)

@@ -155,10 +155,10 @@ img.avatar.tiny {
 
     display: grid;
 
-    gap: 10px;
+    column-gap: 10px;
 
     grid-template-columns: 1fr 2fr;
-    grid-template-rows: 60px 1fr 1fr;
+    grid-template-rows: auto 1fr 1fr;
 }
 
 .navbar {
@@ -180,7 +180,7 @@ img.avatar.tiny {
 
     display: grid;
 
-    grid-template-columns: 50px 7fr 1fr;
+    grid-template-columns: 50px 7fr 2fr;
 
     gap: 10px;
 
@@ -194,14 +194,47 @@ img.avatar.tiny {
 }
 
 
-.post-container .like {
+.post-container .buttons {
     grid-row: 1 / span 2;
     grid-column-start: 3;
 
-    text-align: center;
-
+    display: flex;
+    justify-content: end;
+    align-items: end;
 }
 
+.post-container .comments {
+    grid-column: 1 / span 3;
+    border: 1px solid #00000055;
+    padding: 3px;
+}
+
+.post-container .comments .comment {
+    align-items: center;
+    display: flex;
+    column-gap: 4px;
+}
+
+
+
+.post-container .buttons .delete-post {
+    align-self: flex-start;
+}
+
+.post-container .buttons div {
+    padding-inline: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.post-container .message {
+    grid-column-start: 2;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
 .post-container .like form {
     display: block;
 }
@@ -209,6 +242,11 @@ img.avatar.tiny {
 .like-image {
     width: 35px;
     height: 35px;
+}
+
+.comment-like-image {
+    width: 15px;
+    height: 15px;
 }
 
 div.padd {
@@ -301,5 +339,25 @@ nav a {
 }
 
 .hide {
-    display: none;
+    display: none !important;
+}
+
+.profile-info-container {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.comment-button {
+    order: -1;
+}
+
+.comment-form {
+    flex-direction: row;
+    padding: 10px;
+}
+
+.comment-form input {
+    flex-direction: row;
+    font-size: 0.8em;
 }
