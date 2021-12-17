@@ -2,23 +2,26 @@ from random import sample
 from account.models import Friend, Account
 
 
-def get(user: Account, only_accepted: bool, my_offers=False) -> list[Account]:
+def get(user: Account, only_accepted: bool) -> list[Account]:
     '''
     Возвращает список заявок в друзья
     Если only_accepted == True - только принятных
-    Если my_offers - только мои или принятые заявки
     '''
     users = []
     for offer in user.friend_offers.all():
         friend = _get_other_from_offer(user, offer)
-        users_accepted = offer.users_accepted.all()
-        is_accepted = len(users_accepted) - 1
-        is_my_offer = user in users_accepted
-        if (((not only_accepted and not is_my_offer) or is_accepted) and not my_offers) or (my_offers and is_my_offer):
-            # ну, крч это условие определяет нужная ли эта заявка, не пытайтесь в нём разобраться
+        accepted = offer.users_accepted.all()
+        is_accepted = len(accepted) == 2
+        if is_accepted or (not only_accepted and user not in accepted):
+            # заявка принята, либо не only_accepted и заявка отправлена мне, а не мною
             users.append({'user': friend,
                           'is_accepted': is_accepted})
     return users
+
+
+def get_my_offers(user: Account) -> list[Account]:
+    '''Возвращает список друзей и пользователей на которых подписан user'''
+    return [_get_other_from_offer(user, fr) for fr in user.friends.all()]
 
 
 def get_random_accepted(user: Account, k: int) -> list[Account]:

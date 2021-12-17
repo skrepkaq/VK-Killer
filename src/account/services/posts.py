@@ -101,7 +101,7 @@ def _get_by_id(id: int, content) -> Post:
 
 def _get_posts_of_friends(user: Account) -> list[Post]:
     '''Возвращает посты друзей пользователя'''
-    friends_users = [fr["user"] for fr in friends.get(user, True, True)]
+    friends_users = friends.get_my_offers(user)
     return Post.objects.filter(user__in=friends_users)
 
 
