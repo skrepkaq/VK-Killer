@@ -108,8 +108,8 @@ def _get_posts_of_friends(user: Account) -> list[Post]:
 
 @database_sync_to_async
 def get_random_posts(user: Account, count: int) -> list[Post]:
-    '''Возвращает count или меньше случайных постов (исключая посты от user)'''
-    posts = Post.objects.filter(~Q(user=user)).order_by('?')
+    '''Возвращает count или меньше случайных постов (исключая посты от user и от скрытых пользователей)'''
+    posts = Post.objects.filter(~Q(user=user) & Q(user__is_hidden_from_feed=False)).order_by('?')
     if len(posts) < count:
         count = len(posts)
     return posts[:count]
