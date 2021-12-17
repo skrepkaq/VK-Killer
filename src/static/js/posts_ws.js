@@ -17,7 +17,11 @@ posts_socket.onmessage = (e) => {
     if ('posts' in data) {
         console.log(data.posts)
         showNewPosts(data.posts)
-        posts = posts.concat(data.posts)
+        for (let i in data.posts) {
+            if (!data.posts[i].is_random_post) {
+                posts.push(data.posts[i])
+            }
+        }
         requestedMorePosts = false;
         if (data.posts.length === 0) endOfPosts = true; //больше постов нет - конец ленты
     } else if ('yourID' in data) {
@@ -40,7 +44,7 @@ if (sourse_info.type != 'post') {
             а так же переписка прокручена вверх больше чем на 200 пикселей -
             запросить более старых сообщений
             */
-            sendPostsRequest(sourse_info, posts[posts.length-1].id)
+            sendPostsRequest(sourse_info, posts.length > 0 ? posts[posts.length-1].id : -1)
             requestedMorePosts = true;
         }
     })
@@ -59,7 +63,6 @@ const sendPostsRequest = (sourse_info, last_post_id=-1) => {
     }
 
 posts_socket.onopen = () => {
-    console.log('open')
     sendPostsRequest(sourse_info)
 }
     

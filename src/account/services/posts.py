@@ -1,5 +1,6 @@
 import os
 import re
+from django.db.models import Q
 from channels.db import database_sync_to_async
 from account.models import Account, Comment, Post
 from account.services import images, friends
@@ -105,9 +106,10 @@ def _get_posts_of_friends(user: Account) -> list[Post]:
     return Post.objects.filter(user__in=friends_users)
 
 
-def _get_random_posts(count: int) -> list[Post]:
-    '''Возвращает count или меньше случайных постов'''
-    posts = Post.objects.order_by('?')
+@database_sync_to_async
+def get_random_posts(user: Account, count: int) -> list[Post]:
+    '''Возвращает count или меньше случайных постов (исключая посты от user)'''
+    posts = Post.objects.filter(~Q(user=user)).order_by('?')
     if len(posts) < count:
         count = len(posts)
     return posts[:count]

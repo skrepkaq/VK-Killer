@@ -16,7 +16,11 @@ class PostsConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         if data['type'] == 'posts_request':
             psts = await posts.get(data['sourse_info'], data['last_post_id'])
-            out_posts = await self.serialize_posts(psts, data['sourse_info']['type'] != 'post')
+            out_posts = await self.serialize_posts(psts, data['sourse_info']['type'] != 'post', False)
+            if data['sourse_info']['type'] == 'feed':
+                # подмешать случайные посты 3 в нормальном случае и до 10 если от друзей закончились
+                psts = await posts.get_random_posts(self.user, 10-len(out_posts) if len(out_posts) < 10 else 3)
+                out_posts += await self.serialize_posts(psts, True, True)
             await self.send(text_data=json.dumps({'posts': out_posts}))
         elif data['type'] == 'action':
             if data['action_type'] == 'like':
@@ -27,7 +31,7 @@ class PostsConsumer(AsyncWebsocketConsumer):
                     await self.send(text_data=json.dumps({'postIsDeleted': True}))
 
     @sync_to_async
-    def serialize_posts(self, psts: list[Post], only_top_comment: bool) -> list[dict]:
+    def serialize_posts(self, psts: list[Post], only_top_comment: bool, is_random_post: bool) -> list[dict]:
         '''Подготавливает посты с комментариями для отправки по ws'''
         out_posts = []
         for p in psts:
@@ -51,6 +55,7 @@ class PostsConsumer(AsyncWebsocketConsumer):
                               'message': p.message,
                               'image': p.image.url if p.image else None,
                               'time': time.strftime("%H:%M", p.timestamp.timetuple()),
+                              'is_random_post': is_random_post,
                               'comments': comments,
                               'comments_count': comments_count,
                               'likes': [like.id for like in p.likes.all()]})
