@@ -168,6 +168,15 @@ img.avatar.tiny {
 .posts {
     grid-column-start: 2;
     grid-row: 2 / span 2;
+    row-gap: 10px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.posts-feed {
+    grid-column-start: 1;
+    flex-direction: column;
+    padding: 10px;
 }
 
 .new-post {
@@ -180,17 +189,19 @@ img.avatar.tiny {
 
     display: grid;
 
-    grid-template-columns: 50px 7fr 2fr;
+    grid-template-columns: auto 7fr 2fr;
 
     gap: 10px;
 
     padding: 8px;
 }
 
-.post-container .avatar {
+.post-container div.avatar {
     grid-row: 1 / span 2;
 
-    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 
@@ -234,6 +245,7 @@ img.avatar.tiny {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
+    column-gap: 5px;
 }
 .post-container .like form {
     display: block;
@@ -360,4 +372,30 @@ nav a {
 .comment-form input {
     flex-direction: row;
     font-size: 0.8em;
+}
+
+.like-image {
+    content: url("/static/images/like.png");
+}
+
+.like-image.pressed {
+    content: url("/static/images/like_pressed.png");
+}
+
+#feed-container {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    column-gap: 10px;
+    grid-template-rows: auto 1fr;
+}
+
+.username-text {
+    font-size: 0.85em;
+    color: #00000082 !important;
+}
+
+.icon35 {
+    width: 35px;
+    height: 35px;
 }

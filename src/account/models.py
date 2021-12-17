@@ -55,17 +55,17 @@ class Account(AbstractBaseUser):
 
 
 class Friend(models.Model):
-    users = models.ManyToManyField(Account, related_name='users')
-    users_accepted = models.ManyToManyField(Account, related_name='users_accepted')
+    users = models.ManyToManyField(Account, related_name='friend_offers')
+    users_accepted = models.ManyToManyField(Account, related_name='friends')
 
 
 class Dm(models.Model):
-    users = models.ManyToManyField(Account)
+    users = models.ManyToManyField(Account, related_name='dms')
 
 
 class Message(models.Model):
-    user = models.ForeignKey(Account, on_delete=models.CASCADE)
-    dm = models.ForeignKey(Dm, on_delete=models.CASCADE)
+    user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='messages')
+    dm = models.ForeignKey(Dm, on_delete=models.CASCADE, related_name='messages')
     message = models.CharField(max_length=500)
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
@@ -75,16 +75,16 @@ class Message(models.Model):
 
 
 class Post(models.Model):
-    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='posts')
     message = models.CharField(max_length=500, blank=True)
     image = models.ImageField(upload_to='images', blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField(Account, blank=True, related_name='likes')
+    likes = models.ManyToManyField(Account, blank=True, related_name='liked_posts')
 
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='comments_likes')
+    user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='liked_comments')
     message = models.CharField(max_length=500)
     timestamp = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(Account, blank=True)

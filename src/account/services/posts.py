@@ -1,8 +1,8 @@
 import os
-import time
 import re
+from channels.db import database_sync_to_async
 from account.models import Account, Comment, Post
-from account.services import images
+from account.services import images, friends
 
 
 path = 'media/images/'
@@ -10,16 +10,28 @@ if not os.path.exists(path):
     os.makedirs(path)
 
 
-def get_all(user: Account) -> list[dict]:
-    '''Возвращает все посты пользователя'''
-    return [_serialize_post(p, True) for p in Post.objects.filter(user=user)]
+@database_sync_to_async
+def get(sourse_info: dict, last_post_id: int) -> list[dict]:
+    '''Возвращает запрошенные посты'''
+    num = 10 if last_post_id > 1 else 15  # Количество постов загружаемых за раз, в первый раз
+    if sourse_info["type"] in ['profile', 'feed']:
+        sourse = Account.objects.get(pk=sourse_info["id"])
 
+        if sourse_info["type"] == 'feed':
+            # лента из постов друзей
+            posts = _get_posts_of_friends(sourse).order_by('-id')
+        else:
+            # посты конкретного пользователя
+            posts = sourse.posts.all().order_by('-id')
 
-def get(id: int) -> dict:
-    '''Возвращает готовый для отображения пост по id'''
-    post = _get_by_id(id, Post)
-    if not post: return False
-    return _serialize_post(post)
+        if last_post_id > 0:
+            posts = posts.filter(id__lt=last_post_id)
+        if len(posts) < num: num = len(posts)
+
+        return posts[:num]
+    elif sourse_info["type"] == 'post':
+        # конкретный пост
+        return Post.objects.filter(pk=sourse_info["id"])
 
 
 def create(request) -> bool:
@@ -57,33 +69,25 @@ def send_comment(request, post_id: int) -> bool:
                 return True
 
 
-def delete(request) -> bool:
+@database_sync_to_async
+def delete(user: Account, post_id: int) -> bool:
     '''Удаляет пост. В случае успеха возвращает True'''
-    if request.method == 'POST':
-        if request.POST['action'].startswith('delete_post'):
-            post_id = request.POST['action'].split('_')[2]
-            post = _get_by_id(post_id, Post)
-            if post and post.user == request.user:
-                post.delete()
-                return True
+    post = _get_by_id(post_id, Post)
+    if post and post.user == user:
+        post.delete()
+        return True
 
 
-def like(request) -> bool:
-    '''Ставит или убирает лайк с поста/коммента. Возвращает True в случае успеха'''
-    if request.method == 'POST':
-        if request.POST['action'].startswith('like'):
-            content_id = request.POST['action'].split('_')[-1]
-            content_type = request.POST['action'].split('_')[1]
+@database_sync_to_async
+def like(user: Account, content_type: str, id: int) -> None:
+    '''Ставит или убирает лайк с поста/коммента'''
+    content = _get_by_id(id, Post if content_type == 'post' else Comment)
+    if not content: return
 
-            content = _get_by_id(content_id, Post if content_type == 'post' else Comment)
-            if not content: return False
-
-            if request.user in content.likes.all():
-                content.likes.remove(request.user)
-            else:
-                content.likes.add(request.user)
-            return True
-    return False
+    if user in content.likes.all():
+        content.likes.remove(user)
+    else:
+        content.likes.add(user)
 
 
 def _get_by_id(id: int, content) -> Post:
@@ -95,21 +99,15 @@ def _get_by_id(id: int, content) -> Post:
     return instance
 
 
-def _serialize_post(p: Post, only_top_comment=False) -> dict:
-    '''Подготавливает пост с комментариями для отображения'''
-    comments = p.comments.all()
-    comments_count = len(comments)
+def _get_posts_of_friends(user: Account) -> list[Post]:
+    '''Возвращает посты друзей пользователя'''
+    friends_users = [fr["user"] for fr in friends.get(user, True, True)]
+    return Post.objects.filter(user__in=friends_users)
 
-    if only_top_comment and comments:
-        comments = sorted(comments, key=lambda x: len(x.likes.all()), reverse=True)[:1]
 
-    return {'user': {'id': p.user.id,
-                     'username': p.user.username,
-                     'avatar': p.user.avatar.url},
-            'id': p.id,
-            'message': p.message,
-            'image': p.image,
-            'time': time.strftime("%H:%M", p.timestamp.timetuple()),
-            'comments': comments,
-            'comments_count': comments_count,
-            'likes': p.likes.all()}
+def _get_random_posts(count: int) -> list[Post]:
+    '''Возвращает count или меньше случайных постов'''
+    posts = Post.objects.order_by('?')
+    if len(posts) < count:
+        count = len(posts)
+    return posts[:count]

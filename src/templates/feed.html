@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Лента
+{% endblock %}
+
+
+{% block body %}
+<div id="feed-container">
+    {% include "navbar.html" %}
+    <div class="posts posts-feed" style="overflow-y: scroll" id="posts-box">
+    </div>
+</div>
+{{ posts_info|json_script:"posts_info" }}
+<script src="{% static 'js/posts_ws.js' %}"></script>
+{% endblock %}

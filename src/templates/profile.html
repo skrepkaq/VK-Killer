@@ -47,10 +47,6 @@
         </div>
     </div>
     <div class="posts" style="overflow-y: scroll;" id="posts-box">
-        {% for post in posts %}
-        {% include "single-post.html" %}
-        <br>
-        {% endfor %}
     </div>
     <div class="new-post padd">
         {% if profile_user == user %}
@@ -66,6 +62,7 @@
         {% endif %}
     </div>
 </div>
-
-<script src="{% static 'js/microblog.js' %}"></script>
+{{ posts_info|json_script:"posts_info" }}
+{% if profile_user == user %}<script src="{% static 'js/microblog.js' %}"></script>{% endif %}
+<script src="{% static 'js/posts_ws.js' %}"></script>
 {% endblock %}

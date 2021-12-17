@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 
 from account.views import register_view, login_view, home_view, logout_view, profile_view, myprofile_view, search_view
-from account.views import message_view, friends_view, dms_view, myfriends_view, settings_view, post_view
+from account.views import message_view, friends_view, dms_view, myfriends_view, settings_view, post_view, feed_view
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -37,6 +37,7 @@ urlpatterns = [
     path('dm/<int:id>', message_view, name='message'),
     path('settings/', settings_view, name='settings'),
     path('post/<int:id>', post_view, name='post'),
+    path('feed/', feed_view, name='feed'),
 ]
 
 

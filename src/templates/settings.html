@@ -14,7 +14,7 @@
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <label for="photo_input">Изменить аватарку<br>
-                <img class="like-image" style="vertical-align: middle;" src="{% static 'images/image.png' %}"> <button type="submit" name="action" value="change_avatar">Применить</button></label>
+                <img class="icon35" style="vertical-align: middle;" src="{% static 'images/image.png' %}"> <button type="submit" name="action" value="change_avatar">Применить</button></label>
             <input id="photo_input" type="file" name="image" style="display: none">
             
         </form>

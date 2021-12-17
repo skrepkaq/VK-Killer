@@ -35,7 +35,7 @@ def logout_view(request):
 
 @login_required(login_url='login')
 def home_view(request):
-    return render(request, "home.html")
+    return feed_view(request)
 
 
 def profile_view(request, id):
@@ -44,22 +44,19 @@ def profile_view(request, id):
         return HttpResponse('<h3>404</h3>')
 
     is_post_created = posts.create(request)
-    is_post_deleted = posts.delete(request)
-    is_liked = posts.like(request)
 
-    if is_post_created or is_liked or is_post_deleted:
-        # если добавлен/удалён пост или лайк - перезагрузит страницу что бы сбросить post запрос
+    if is_post_created:
+        # если добавлен пост - перезагрузит страницу что бы сбросить post запрос
         return HttpResponseRedirect(f'/profile/{id}')
 
     accepted = profile.offer(request, profile_user)
     fr, k = friends.get_random_accepted(profile_user, k=3)
-    psts = posts.get_all(profile_user)
 
     context = {'profile_user': profile_user,
                'offer_accepted_users': accepted,
                'friends': fr,
                'friends_count': k,
-               'posts': psts}
+               'posts_info': {'id': profile_user.id, 'type': 'profile'}}
     return render(request, 'profile.html', context)
 
 
@@ -129,15 +126,16 @@ def settings_view(request):
 
 
 def post_view(request, id):
-    post = posts.get(id)
-    if not post:
-        return HttpResponse('<h3>404</h3>')
-
-    is_liked = posts.like(request)
     is_comment_send = posts.send_comment(request, id)
 
-    if is_liked or is_comment_send:
-        # если комментарий или поставлен лайк - перезагрузит страницу что бы сбросить post запрос
+    if is_comment_send:
+        # если отправлен комментарий - перезагрузит страницу что бы сбросить post запрос
         return HttpResponseRedirect(f'/post/{id}')
-    context = {'post': post, 'open': True}
+    context = {'posts_info': {'id': id, 'type': 'post'}}
     return render(request, 'post.html', context)
+
+
+@login_required(login_url='login')
+def feed_view(request):
+    context = {'posts_info': {'id': request.user.id, 'type': 'feed'}}
+    return render(request, 'feed.html', context)

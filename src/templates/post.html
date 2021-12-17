@@ -7,11 +7,13 @@
 
 {% block body %}
 {% include "navbar.html" %}
-{% include "single-post.html" %}
+<div class="posts" style="overflow-y: scroll;" id="posts-box">
+</div>
 <form class="comment-form" method="POST" action="">
     {% csrf_token %}
     <input type="text" name="message" required autocomplete="off" size=50 placeholder="Комментарий">
     <button type="submit" name="action" value="send_comment">Отправить</button>
 </form>
-<script src="{% static 'js/microblog.js' %}"></script>
+{{ posts_info|json_script:"posts_info" }}
+<script src="{% static 'js/posts_ws.js' %}"></script>
 {% endblock %}
