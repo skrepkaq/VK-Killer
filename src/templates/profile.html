@@ -15,21 +15,29 @@
             <div class="avatar"><img class="avatar" src="{{profile_user.avatar.url}}"></div>
             {% if not profile_user == user and user.is_authenticated %}
                 <div class="send-message-button"><a href="/dm/{{profile_user.id}}"><button>Написать сообщение</button></a></div>
-                <div class="add-friend-button">
-                    {% if not user in offer_accepted_users %}
+                {% if not user in offer_accepted_users %}
+                    <div class="add-friend-button">
                         <form method="POST" action="">
                             {% csrf_token %}
                             <button type="submit" name="action" value="add_friend">Добавить в друзья</button>
                         </form>
-                        {% if profile_user in offer_accepted_users %}
-                            <br><small>Пользователь подписан на вас</small>
-                        {% endif %}
-                    {% elif profile_user in offer_accepted_users %}
+                    </div>
+                    {% if profile_user in offer_accepted_users %}
+                        <small>Пользователь подписан на вас</small>
+                    {% endif %}
+                {% else %}
+                    <div class="delete-friend-button">
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="remove_friend">Удалить из друзей</button>
+                        </form>
+                    </div>
+                    {% if profile_user in offer_accepted_users %}
                         <small>Пользователь у вас в друзьях</small>
                     {% else %}
                         <small>Заявка в друзья отправлена</small>
                     {% endif %}
-                </div>
+                {% endif %}
             {% endif %}
             {% if friends %}
                 <div class="friends-count"><a class="link-text" href="/friends/{{profile_user.id}}">Друзей: {{friends_count}}</a></div>

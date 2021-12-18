@@ -19,6 +19,14 @@ def offer(request, profile_user: Account) -> list[Account]:
     if request.method == 'POST':
         if request.POST['action'] == "add_friend":
             offer = _create_or_accept_offer(offer, request.user, profile_user)
+        elif request.POST['action'] == "remove_friend":
+            offer = _get_offer(request.user, profile_user)
+            if offer:
+                if len(offer.users_accepted.all()) == 1:
+                    offer.delete()
+                    offer = None
+                else:
+                    offer.users_accepted.remove(request.user)
 
     if offer:
         return offer.users_accepted.all()
