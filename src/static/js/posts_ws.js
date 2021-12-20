@@ -6,7 +6,6 @@ const posts_socket = new WebSocket(`${ws_scheme}://${window.location.host}/ws/po
 const staticUrl = '/static'
 
 var box_max_scroll
-var myID;
 var endOfPosts
 var requestedMorePosts
 var posts = []
@@ -24,8 +23,6 @@ posts_socket.onmessage = (e) => {
         }
         requestedMorePosts = false;
         if (data.posts.length === 0) endOfPosts = true; //больше постов нет - конец ленты
-    } else if ('yourID' in data) {
-        myID = data.yourID
     } else if ('postIsDeleted' in data) {
         window.location.reload()
     }

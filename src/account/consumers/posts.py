@@ -10,7 +10,6 @@ class PostsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope['user']
         await self.accept()
-        await self.send(text_data=json.dumps({'yourID': self.user.id}))
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -50,6 +49,7 @@ class PostsConsumer(AsyncWebsocketConsumer):
 
             out_posts.append({'user': {'id': p.user.id,
                                        'username': p.user.username,
+                                       'lastSeen': p.user.last_seen,
                                        'avatar': p.user.avatar.url},
                               'id': p.id,
                               'message': p.message,

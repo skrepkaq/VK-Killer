@@ -1,4 +1,5 @@
 import time
+from channels.db import database_sync_to_async
 from account.models import Account, Dm, Message
 
 
@@ -21,6 +22,17 @@ def get_with_message(user: Account) -> list[dict]:
                                          'content': msg.message,
                                          'read': msg.read}})
     return dms_with_msg
+
+
+@database_sync_to_async
+def is_unread_messages(user: Account) -> bool:
+    '''Возвращает True если у пользователя есть непрочитанные сообщения'''
+    dms = _get_dms(user)
+    for dm in dms:
+        last_msg = _get_last_message(dm)
+        if last_msg and last_msg.user != user and not last_msg.read:
+            return True
+    return False
 
 
 def _get_dms(user: Account) -> list[Dm]:

@@ -11,7 +11,9 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
+    {{ user.id|json_script:"myID" }}
     {% block body %}
     {% endblock %}
+    {% if user.is_authenticated %}<script src="{% static 'js/notifications_ws.js' %}"></script>{% endif %}
 </body>
 </html>

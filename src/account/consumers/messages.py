@@ -12,21 +12,28 @@ class MessagesConsumer(AsyncWebsocketConsumer):
         self.profile_user = await messages.get_user(self.profile_id)  # пользователь, с кем переписка
         self.dm = await messages.get_or_create_dm(self.user, self.profile_user)  # переписка
         self.dm_group_name = f'dm_{self.dm.id}'  # название ws канала к которому подключится собеседник
+        self.notifications_group_name = f'notifications_{self.profile_user.id}'  # название ws канала уведомлений
 
-        # присоединиться к ws каналу
+        # присоединиться к ws каналам
         await self.channel_layer.group_add(
             self.dm_group_name,
+            self.channel_name
+        )
+        await self.channel_layer.group_add(
+            self.notifications_group_name,
             self.channel_name
         )
 
         await self.accept()
 
-        await self.send(text_data=json.dumps({'yourID': self.user.id}))
-
     async def disconnect(self, _):
-        # удалиться из ws канала
+        # удалиться из ws каналов
         await self.channel_layer.group_discard(
             self.dm_group_name,
+            self.channel_name
+        )
+        await self.channel_layer.group_discard(
+            self.notifications_group_name,
             self.channel_name
         )
 
@@ -53,6 +60,15 @@ class MessagesConsumer(AsyncWebsocketConsumer):
                 self.dm_group_name,
                 {'type': 'send_new_message', 'data': msg}
             )
+            # отправить уведомление пользователю кому было адресовано сообщение
+            await self.channel_layer.group_send(
+                self.notifications_group_name,
+                {'type': 'send_notification', 'data': {'type': 'new_message', 'userID': self.user.id}}
+            )
+
+    async def send_notification(*_):
+        '''Уведомление о новом сообщении от себя самого'''
+        pass
 
     async def send_new_message(self, event):
         # принять сообщение в ws канале и отправить его пользователю
@@ -77,6 +93,7 @@ class MessagesConsumer(AsyncWebsocketConsumer):
         '''Сериализует список сообщений'''
         return [{'user': {'id': msg.user.id,
                           'username': msg.user.username,
+                          'lastSeen': msg.user.last_seen,
                           'avatar': msg.user.avatar.url},
                  'message': {'id': msg.id,
                              'time': time.strftime("%H:%M", msg.timestamp.timetuple()),

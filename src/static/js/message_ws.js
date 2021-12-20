@@ -6,7 +6,6 @@ const socket = new WebSocket(`${ws_scheme}://${window.location.host}/ws/messages
 var loaded, requested_more_messages, end_of_dm;
 var box_max_scroll;
 var messages = [];
-var myID;
 
 
 socket.onmessage = (e) => {
@@ -25,8 +24,6 @@ socket.onmessage = (e) => {
             }
         }
         showMessages()
-    } else if ('yourID' in data) {
-        myID = data.yourID
     }
 }
 
