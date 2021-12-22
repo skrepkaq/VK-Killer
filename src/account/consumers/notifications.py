@@ -23,12 +23,18 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await online.disconnect(self.user)
+        # пользователь отключился, но он может быть подключен в другой вкладке браузера, отправить проверочный запрос
+        await self.channel_layer.group_send(
+            self.notifications_group_name,
+            {'type': 'send_notification', 'data': {'onlineCheck': True}}
+        )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         if data['type'] == 'online_state':
             if data['state']:  # user подключился или отключился
                 is_new_session = await online.connect(self.user)
+                await online.set_timezone(self.user, data['timezone'])
                 if is_new_session:
                     await self.send_is_unread_messages()
             else:
@@ -40,8 +46,8 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
 
     async def send_notification(self, event):
         # принять уведомление о сообщении, отправить через сокет
-        notification_type = event['data']
-        await self.send(text_data=json.dumps({'notification': notification_type}))
+        data = event['data']
+        await self.send(text_data=json.dumps(data))
 
     async def send_is_unread_messages(self):
         '''Проверяет если ли непрочитанные сообщения и отправляет данные через сокет'''

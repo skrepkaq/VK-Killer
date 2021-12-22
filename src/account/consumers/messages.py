@@ -1,8 +1,7 @@
 import json
-import time
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-from account.services import messages
+from account.services import messages, online
 
 
 class MessagesConsumer(AsyncWebsocketConsumer):
@@ -47,14 +46,15 @@ class MessagesConsumer(AsyncWebsocketConsumer):
                     {'type': 'send_read_msg', 'data': -1, 'by_user_id': self.user.id}
                 )
                 # уведомить, что все сообщения прочитаны
-            msgs = await self.serialize_messages(raw_msgs)
+            msgs = await self.serialize_messages(raw_msgs, self.user.timezone)
             await self.send(text_data=json.dumps({'messages': msgs}))
         elif data['type'] == 'message':
             content = data['content']
             if not content or all([s == ' ' for s in content]): return  # пустое сообщение
 
             raw_msg = await messages.create(self.user, self.dm, content)
-            msg = await self.serialize_messages([raw_msg])
+            msg = await self.serialize_messages([raw_msg], self.profile_user.timezone)
+            my_msg = await self.serialize_messages([raw_msg], self.user.timezone)
             # отправить сообщение всем в ws канале
             await self.channel_layer.group_send(
                 self.dm_group_name,
@@ -63,20 +63,21 @@ class MessagesConsumer(AsyncWebsocketConsumer):
             # отправить уведомление пользователю кому было адресовано сообщение
             await self.channel_layer.group_send(
                 self.notifications_group_name,
-                {'type': 'send_notification', 'data': {'type': 'new_message', 'userID': self.user.id}}
+                {'type': 'send_notification', 'data': {'notification': 'new_message', 'userID': self.user.id}}
             )
+            await self.send(text_data=json.dumps({'messages': my_msg}))  # отправить сообщение его автору
 
     async def send_notification(*_):
         '''Уведомление о новом сообщении от себя самого'''
         pass
 
     async def send_new_message(self, event):
-        # принять сообщение в ws канале и отправить его пользователю
         msg = event['data']
-        await self.send(text_data=json.dumps({'messages': msg}))
 
         if msg[0]["user"]["id"] != self.user.id:
-            # если только что отправленное сообщение принято получаетем - отметить как прочитанное
+            # отправить сообещние получателю
+            await self.send(text_data=json.dumps({'messages': msg}))
+            # отметить как прочитанное
             await messages.mark_read(msg[0]["message"]["id"])
             await self.channel_layer.group_send(
                 self.dm_group_name,
@@ -89,13 +90,13 @@ class MessagesConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({'readMsg': msg_id, 'byUserID': event['by_user_id']}))
 
     @sync_to_async
-    def serialize_messages(self, messages) -> list[dict]:
+    def serialize_messages(self, messages, tz: int) -> list[dict]:
         '''Сериализует список сообщений'''
         return [{'user': {'id': msg.user.id,
                           'username': msg.user.username,
                           'lastSeen': msg.user.last_seen,
                           'avatar': msg.user.avatar.url},
                  'message': {'id': msg.id,
-                             'time': time.strftime("%H:%M", msg.timestamp.timetuple()),
+                             'time': online.convert_datetime_to_str(msg.timestamp, tz),
                              'content': msg.message,
                              'read': msg.read}} for msg in messages]

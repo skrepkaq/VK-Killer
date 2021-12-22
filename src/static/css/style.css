@@ -381,6 +381,11 @@ nav a {
     content: url("/static/images/like_pressed.png");
 }
 
+.last-seen {
+    font-size: 0.95em;
+    color: #00000094 !important;
+}
+
 #feed-container {
     width: 100vw;
     height: 100vh;

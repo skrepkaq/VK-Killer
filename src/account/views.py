@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from .forms import AccountCreateForm, AccountLoginForm
-from .services import account, profile, dms, friends, search, posts, account_settings, avatar
+from .services import account, profile, dms, friends, search, posts, account_settings, avatar, online
 from .decorators import unauth_user
 
 
@@ -51,11 +51,13 @@ def profile_view(request, id):
 
     accepted = profile.offer(request, profile_user)
     fr, k = friends.get_random_accepted(profile_user, k=3)
+    last_seen = online.get_last_seen_info(request.user, profile_user)
 
     context = {'profile_user': profile_user,
                'offer_accepted_users': accepted,
                'friends': fr,
                'friends_count': k,
+               'last_seen': last_seen,
                'posts_info': {'id': profile_user.id, 'type': 'profile'}}
     return render(request, 'profile.html', context)
 
