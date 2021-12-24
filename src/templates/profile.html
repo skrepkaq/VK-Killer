@@ -12,7 +12,7 @@
     <div class="profile-info padd">
         <div class="profile-info-container">
             <div class="nickname"><h3>{{profile_user}}</h3></div>
-            <div class="avatar"><img class="avatar" src="{{profile_user.avatar.url}}"></div>
+            <img class="avatar" src="{{profile_user.avatar.url}}">
             <div class="last-seen">{{last_seen}}</div>
             {% if not profile_user == user and user.is_authenticated %}
                 <div class="send-message-button"><a href="/dm/{{profile_user.id}}"><button>Написать сообщение</button></a></div>

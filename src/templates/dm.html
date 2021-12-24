@@ -6,15 +6,18 @@
 
 
 {% block body %}
-{% include "navbar.html" %}
-<div id="messages-box" style="height: 800px;">
+<div class="dm-container">
+    <div class="navbar">{% include "navbar.html" %}</div>
+    <div id="messages-box"></div>
+    <div class="send-msg-block">
+        <section class="msg_form">
+            <form class="full">
+                <input type="text" id="message" name="msg" required placeholder="Сообщение" autofocus autocomplete="off">
+                <input type="submit" id="send-message" value="Send">
+            </form>
+        </section>
+    </div>
 </div>
-<section class="msg_form">
-    <form class="full">
-        <input type="text" id="message" name="msg" required placeholder="Сообщение" autofocus autocomplete="off">
-        <input type="submit" id="send-message" value="Send">
-    </form>
-</section>
 {{ dm_user.id|json_script:"profile_user_id" }}
 <script src="{% static 'js/message_ws.js' %}"></script>
 {% endblock %}

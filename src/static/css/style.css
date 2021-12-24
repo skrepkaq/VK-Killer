@@ -63,17 +63,18 @@ header {
 }
 
 img.avatar {
-    width: 200px;
-    height: 200px;
+    max-width: 66%;
     border-radius: 20%;
 }
 
 img.avatar.small {
+    max-width: 50px;
     width: 50px;
     height: 50px;
 }
 
 img.avatar.tiny {
+    max-width: 25px;
     width: 25px;
     height: 25px;
 }
@@ -138,9 +139,8 @@ img.avatar.tiny {
 }
 
 .post-image {
-    height: 100%;
-    max-width: 300px;
-    max-height: 300px;
+    height: auto;
+    max-width: 60%;
 }
 
 #preview_image {
@@ -182,6 +182,7 @@ img.avatar.tiny {
 .new-post {
     align-self: flex-end;
 }
+
 
 
 .post-container {
@@ -253,12 +254,10 @@ img.avatar.tiny {
 
 .like-image {
     width: 35px;
-    height: 35px;
 }
 
 .comment-like-image {
     width: 15px;
-    height: 15px;
 }
 
 div.padd {
@@ -401,5 +400,47 @@ nav a {
 
 .icon35 {
     width: 35px;
-    height: 35px;
+}
+
+@media (orientation: portrait) {
+    .profile-container {
+        grid-template-rows: auto auto auto;
+        grid-template-columns: 1fr 1fr;
+    }
+    .posts {
+        flex-direction: column;
+        grid-column: 1 / span 2;
+        grid-row-start: 3;
+    }
+    .friends {
+        display: none;
+    }
+    .new-post {
+        grid-column-start: 2;
+        align-self: center;
+    }
+    .post-image {
+        max-width: 40vw;
+    }
+    img.avatar.tiny {
+        max-width: 5vw;
+        width: 5vw;
+        height: 5vw;
+    }
+    .like-image {
+        width: 5vw;
+    }
+    .comment-like-image {
+        width: 15px;
+    }
+    .post-container .buttons div {
+        padding-inline: 1px;
+    }
+}
+
+.dm-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
