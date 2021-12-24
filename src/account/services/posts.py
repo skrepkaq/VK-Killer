@@ -83,7 +83,7 @@ def delete(user: Account, post_id: int) -> bool:
 def like(user: Account, content_type: str, id: int) -> None:
     '''Ставит или убирает лайк с поста/коммента'''
     content = _get_by_id(id, Post if content_type == 'post' else Comment)
-    if not content: return
+    if not content or not user.is_authenticated: return
 
     if user in content.likes.all():
         content.likes.remove(user)

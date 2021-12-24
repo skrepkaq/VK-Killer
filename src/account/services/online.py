@@ -1,11 +1,7 @@
 import time
-import locale
 from datetime import datetime, timezone, timedelta
 from channels.db import database_sync_to_async
 from account.models import Account
-
-
-locale.setlocale(locale.LC_ALL, ('ru_RU', 'UTF-8'))
 
 
 @database_sync_to_async

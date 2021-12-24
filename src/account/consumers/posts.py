@@ -13,13 +13,14 @@ class PostsConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         if data['type'] == 'posts_request':
+            tz = self.user.timezone if self.user.is_authenticated else 0
             psts = await posts.get(data['sourse_info'], data['last_post_id'])
-            out_posts = await self.serialize_posts(psts, self.user.timezone,
+            out_posts = await self.serialize_posts(psts, tz,
                                                    data['sourse_info']['type'] != 'post', False)
             if data['sourse_info']['type'] == 'feed':
                 # подмешать случайные посты 3 в нормальном случае и до 10 если от друзей закончились
                 psts = await posts.get_random_posts(self.user, 10-len(out_posts) if len(out_posts) < 10 else 3)
-                out_posts += await self.serialize_posts(psts, self.user.timezone, True, True)
+                out_posts += await self.serialize_posts(psts, tz, True, True)
             await self.send(text_data=json.dumps({'posts': out_posts}))
         elif data['type'] == 'action':
             if data['action_type'] == 'like':
