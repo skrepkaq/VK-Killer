@@ -19,6 +19,8 @@ def connect(user: Account) -> bool:
 @database_sync_to_async
 def disconnect(user: Account) -> None:
     '''Пользователь вышел из онлайна - записать последнее время'''
+    user = Account.objects.get(pk=user.id)
+    # если не обновить пользователя из базы, обновившиеся параметры могут пропасть
     user.last_seen = time.time()
     user.save()
 

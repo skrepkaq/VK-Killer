@@ -35,6 +35,7 @@ class Account(AbstractBaseUser):
     is_hidden_from_feed = models.BooleanField(default=False)
     last_seen = models.IntegerField(default=0)
     timezone = models.IntegerField(default=0)
+    url = models.CharField(blank=True, max_length=25)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -45,6 +46,9 @@ class Account(AbstractBaseUser):
         if not self.avatar:
             # если у пользователя нет аватарки - сгенерировать и сохранить
             self.avatar = 'avatars/defaults/' + avatar.create(self.username)
+        if not self.url:
+            # стандартный url = id пользователя
+            self.url = self.id
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:

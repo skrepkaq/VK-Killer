@@ -10,8 +10,8 @@
 <p>
 <table id="users-table">
     {% for usr in users %}
-        <tr><th><a href="/profile/{{usr.user.id}}"><img class="avatar tiny" src="{{usr.user.avatar.url}}"></a>
-            <a href="/profile/{{usr.user.id}}">{{usr.user}}</a>{% if not usr.is_accepted %} <a>●</a>{% endif %}</th></tr>
+        <tr><th><a href="/profile/{{usr.user.url}}"><img class="avatar tiny" src="{{usr.user.avatar.url}}"></a>
+            <a href="/profile/{{usr.user.url}}">{{usr.user}}</a>{% if not usr.is_accepted %} <a>●</a>{% endif %}</th></tr>
     {% endfor %}
 </table>
 </p>

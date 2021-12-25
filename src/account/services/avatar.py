@@ -58,7 +58,6 @@ def update(request) -> bool:
         if request.POST['action'] == "change_avatar":
             image = request.FILES.get('image')
             if image:
-                print(image.content_type)
                 if image.content_type.startswith('image/'):
                     if image.size < 20971520:
                         filename = images.save(image.read(), path, 'avatar', 300)

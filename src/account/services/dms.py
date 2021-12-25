@@ -15,6 +15,7 @@ def get_with_message(user: Account) -> list[dict]:
 
         dms_with_msg.append({'user': {'id': dm_user.id,
                                       'username': dm_user.username,
+                                      'url': dm_user.url,
                                       'avatar': dm_user.avatar.url},
                              'message': {'id': msg.id,
                                          'username': msg.user.username,

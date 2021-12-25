@@ -15,7 +15,7 @@
             <img class="avatar" src="{{profile_user.avatar.url}}">
             <div class="last-seen">{{last_seen}}</div>
             {% if not profile_user == user and user.is_authenticated %}
-                <div class="send-message-button"><a href="/dm/{{profile_user.id}}"><button>Написать сообщение</button></a></div>
+                <div class="send-message-button"><a href="/dm/{{profile_user.url}}"><button>Написать сообщение</button></a></div>
                 {% if not user in offer_accepted_users %}
                     <div class="add-friend-button">
                         <form method="POST" action="">
@@ -41,13 +41,13 @@
                 {% endif %}
             {% endif %}
             {% if friends %}
-                <div class="friends-count"><a class="link-text" href="/friends/{{profile_user.id}}">Друзей: {{friends_count}}</a></div>
+                <div class="friends-count"><a class="link-text" href="/friends/{{profile_user.url}}">Друзей: {{friends_count}}</a></div>
                 <div class="friends">
                     <table>
                         <tr>
                             {% for fr in friends %}
-                                <th><a href="/profile/{{fr.id}}"><img class="avatar small" src="{{fr.avatar.url}}"><br>
-                                    <a href="/profile/{{fr.id}}" class="link-text nickname-small">{{fr}}</a></a></th>
+                                <th><a href="/profile/{{fr.url}}"><img class="avatar small" src="{{fr.avatar.url}}"><br>
+                                    <a href="/profile/{{fr.url}}" class="link-text nickname-small">{{fr}}</a></a></th>
                             {% endfor %}
                         </tr>
                     </table>

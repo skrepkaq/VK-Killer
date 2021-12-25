@@ -94,6 +94,7 @@ class MessagesConsumer(AsyncWebsocketConsumer):
         '''Сериализует список сообщений'''
         return [{'user': {'id': msg.user.id,
                           'username': msg.user.username,
+                          'url': msg.user.url,
                           'lastSeen': msg.user.last_seen,
                           'avatar': msg.user.avatar.url},
                  'message': {'id': msg.id,

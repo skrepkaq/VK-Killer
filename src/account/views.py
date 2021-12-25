@@ -38,8 +38,8 @@ def home_view(request):
     return feed_view(request)
 
 
-def profile_view(request, id):
-    profile_user = profile.get_user(id)
+def profile_view(request, slug):
+    profile_user = profile.get_user(slug)
     if not profile_user:
         return HttpResponse('<h3>404</h3>')
 
@@ -47,7 +47,7 @@ def profile_view(request, id):
 
     if is_post_created:
         # если добавлен пост - перезагрузит страницу что бы сбросить post запрос
-        return HttpResponseRedirect(f'/profile/{id}')
+        return HttpResponseRedirect(f'/profile/{slug}')
 
     accepted = profile.offer(request, profile_user)
     fr, k = friends.get_random_accepted(profile_user, k=3)
@@ -64,12 +64,12 @@ def profile_view(request, id):
 
 @login_required(login_url='login')
 def myprofile_view(request):
-    return profile_view(request, request.user.id)
+    return profile_view(request, str(request.user.id))
 
 
 @login_required(login_url='login')
 def myfriends_view(request):
-    return friends_view(request, request.user.id)
+    return friends_view(request, str(request.user.id))
 
 
 def search_view(request):
@@ -80,8 +80,8 @@ def search_view(request):
 
 
 @login_required(login_url='login')
-def message_view(request, id):
-    profile_user = profile.get_user(id)
+def message_view(request, slug):
+    profile_user = profile.get_user(slug)
     if not profile_user:
         return HttpResponse('<h3>404</h3>')
 
@@ -95,8 +95,8 @@ def message_view(request, id):
     return render(request, 'dm.html', context)
 
 
-def friends_view(request, id):
-    profile_user = profile.get_user(id)
+def friends_view(request, slug):
+    profile_user = profile.get_user(slug)
     if not profile_user:
         return HttpResponse('<h3>404</h3>')
 
@@ -120,10 +120,19 @@ def settings_view(request):
     password_form, is_password_changed = account_settings.change_password(request)
     is_avatar_updated = avatar.update(request)
 
-    if is_password_changed or is_avatar_updated:
+    url_change_error = None
+    try:
+        is_url_changed = account_settings.change_url(request)
+    except ValueError as e:
+        is_url_changed = False
+        url_change_error = e
+
+    if is_password_changed or is_avatar_updated or is_url_changed:
         return redirect('settings')
 
-    context = {'password_form': password_form if request.method == 'POST' else None}
+    context = {'password_form': password_form if request.method == 'POST'
+               and request.POST["action"] == 'change_password' else None,
+               'url_change_error': url_change_error}
     return render(request, 'settings.html', context)
 
 

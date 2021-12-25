@@ -2,7 +2,7 @@
 <p>
 <table id="users-table">
     {% for usr in users %}
-        <tr><th><a href="/profile/{{usr.id}}"><img class="avatar tiny" src="{{usr.avatar.url}}"></a> <a href="/profile/{{usr.id}}">{{usr}}</a></th></tr>
+        <tr><th><a href="/profile/{{usr.url}}"><img class="avatar tiny" src="{{usr.avatar.url}}"></a> <a href="/profile/{{usr.url}}">{{usr}}</a></th></tr>
     {% endfor %}
 </table>
 </p>

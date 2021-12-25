@@ -10,8 +10,8 @@
 <div id="messages-box">
     {% for dm in dms %}
     <div class="message list">
-        <div class="divavatar"><a href="/dm/{{dm.user.id}}"><img class="avatar small" src="{{dm.user.avatar}}"></a></div>
-        <div class="user"><a href="/profile/{{dm.user.id}}">{{dm.user.username}} <a class="timestamp">{{dm.message.time}}</a></a></div>
+        <div class="divavatar"><a href="/dm/{{dm.user.url}}"><img class="avatar small" src="{{dm.user.avatar}}"></a></div>
+        <div class="user"><a href="/profile/{{dm.user.url}}">{{dm.user.username}} <a class="timestamp">{{dm.message.time}}</a></a></div>
         <div class="msg">{{dm.message.username}}: {{dm.message.content}}</div>
         {% if dm.message.username != user.username and not dm.message.read %}
         <div class="marker">●</div>

@@ -2,10 +2,13 @@ from django.db.models import Count
 from account.models import Account, Friend
 
 
-def get_user(id: int) -> Account:
+def get_user(slug: str) -> Account:
     '''Возвращает аккаунт владельца страницы если существует'''
     try:
-        user = Account.objects.get(pk=id)
+        if slug.isdigit():
+            user = Account.objects.get(pk=int(slug))
+        else:
+            user = Account.objects.get(url=slug)
     except Account.DoesNotExist:
         user = None
     return user

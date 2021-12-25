@@ -7,6 +7,8 @@ class AccountConfig(AppConfig):
 
     def ready(self):
         import time
+        from django.db.models import F
         from account.models import Account
 
         Account.objects.filter(last_seen=-1).update(last_seen=time.time())
+        Account.objects.filter(url='').update(url=F('id'))

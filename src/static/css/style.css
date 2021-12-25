@@ -278,6 +278,7 @@ div.padd {
 
 .avatar-container {
     text-align: center;
+    max-width: 400px;
 }
 
 /* .settings {
@@ -356,6 +357,7 @@ nav a {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
+    max-width: 350px;
 }
 
 .comment-button {
@@ -435,6 +437,9 @@ nav a {
     }
     .post-container .buttons div {
         padding-inline: 1px;
+    }
+    .comment-form {
+        flex-direction: column;
     }
 }
 

@@ -114,7 +114,7 @@ const showNewPosts = (newPosts) => {
         mdiv.appendChild(divButtons)
         
         aMessage.textContent = `${post.message} `
-        divAvatar.insertAdjacentHTML('afterbegin', `<a href="/profile/${post.user.id}"><img class="avatar small" src="${post.user.avatar}"></a><a class="username-text">${post.user.username}</a>`)
+        divAvatar.insertAdjacentHTML('afterbegin', `<a href="/profile/${post.user.url}"><img class="avatar small" src="${post.user.avatar}"></a><a class="username-text">${post.user.username}</a>`)
         
         divButtons.insertAdjacentHTML('afterbegin', `<div class="like"><p><a class="nickname-small">Likes</a>${post.likes.length}</p><button name="action" class="action-button" onClick="sendAction('like', 'post', ${post.id}, this)"><img class="like-image like${post.likes.includes(myID) ? ' pressed' : ''}"></button></div>`)
         if (sourse_info.type != 'post') {
@@ -144,7 +144,7 @@ const showNewPosts = (newPosts) => {
                 let divComment = document.createElement('div')
                 divComment.classList.add("comment")
                 let aUsername = document.createElement('a')
-                aUsername.setAttribute('href', `/profile/${comm.user.id}`)
+                aUsername.setAttribute('href', `/profile/${comm.user.url}`)
                 aUsername.classList.add("link-text")
                 aUsername.textContent = `${comm.user.username} `
                 let aMessage = document.createElement('a')
@@ -153,7 +153,7 @@ const showNewPosts = (newPosts) => {
                 divComment.appendChild(aMessage)
                 
                 divComments.appendChild(divComment)
-                divComment.insertAdjacentHTML('afterbegin', `<a href="/profile/${comm.user.id}"><img class="avatar tiny" src="${comm.user.avatar}"></a>`)
+                divComment.insertAdjacentHTML('afterbegin', `<a href="/profile/${comm.user.url}"><img class="avatar tiny" src="${comm.user.avatar}"></a>`)
                 divComment.insertAdjacentHTML('beforeend', `<div class="comment-like"><button name="action" class="action-button" onClick="sendAction('like', 'comment', ${comm.id}, this)"><img class="comment-like-image like-image${comm.likes.includes(myID) ? ' pressed' : ''}"></button>${comm.likes.length}</div>`)
             }
             mdiv.appendChild(divComments)

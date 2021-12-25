@@ -43,6 +43,7 @@ class PostsConsumer(AsyncWebsocketConsumer):
 
             comments = [{'user': {'id': com.user.id,
                                   'username': com.user.username,
+                                  'url': com.user.url,
                                   'avatar': com.user.avatar.url},
                          'id': com.id,
                          'message': com.message,
@@ -50,6 +51,7 @@ class PostsConsumer(AsyncWebsocketConsumer):
 
             out_posts.append({'user': {'id': p.user.id,
                                        'username': p.user.username,
+                                       'url': p.user.url,
                                        'lastSeen': p.user.last_seen,
                                        'avatar': p.user.avatar.url},
                               'id': p.id,

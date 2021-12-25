@@ -27,12 +27,12 @@
         {% endif %}
     </div>
     <div class="settings padd">
-        <h2 class="padd-top">Настройки акканта:</h2>
+        <h2 class="padd-top">Настройки аккаунта:</h2>
         <div class="passwors-change padd-top" style="padding-top: 70px">
             <p>Изменить пароль</p>
             <form method="POST" action="">
                 {% csrf_token %}
-                <input type="password" name="old_password" autocomplete="current-password" autofocus required id="id_old_password" size=30 placeholder="Старый пароль">
+                <input type="password" name="old_password" autocomplete="current-password" required id="id_old_password" size=30 placeholder="Старый пароль">
                 <input type="password" name="new_password1" autocomplete="new-password" required id="id_new_password1" size=30 placeholder="Новый пароль">
                 <input type="password" name="new_password2" autocomplete="new-password" required id="id_new_password2" size=30 placeholder="Повторите новый пароль">
                 <button type="submit" name="action" value="change_password">Применить</button>
@@ -43,6 +43,20 @@
                             <strong>{{ error|escape }}</strong><br>
                         {% endfor %}
                     {% endfor %}
+                </div>
+                {% endif %}
+            </form>
+        </div>
+        <div class="url-change padd-top" style="padding-top: 70px">
+            <p>Изменить ссылку на аккаунт</p>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <a href=/profile/{{user.url}}>{{request.get_host}}/profile/{{user.url}}</a>
+                <input type="text" name="url" required id="url" size=20 placeholder="Новый url" value="{{user.url}}">
+                <button type="submit" name="action" value="change_url">Применить</button>
+                {% if url_change_error %}
+                <div class="error">
+                    <strong>{{ url_change_error }}</strong><br>
                 </div>
                 {% endif %}
             </form>
