@@ -10,5 +10,8 @@ class AccountConfig(AppConfig):
         from django.db.models import F
         from account.models import Account
 
-        Account.objects.filter(last_seen=-1).update(last_seen=time.time())
-        Account.objects.filter(url='').update(url=F('id'))
+        try:
+            Account.objects.filter(last_seen=-1).update(last_seen=time.time())
+            Account.objects.filter(url='').update(url=F('id'))
+        except Exception:
+            pass
