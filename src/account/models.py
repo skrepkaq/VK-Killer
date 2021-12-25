@@ -35,7 +35,7 @@ class Account(AbstractBaseUser):
     is_hidden_from_feed = models.BooleanField(default=False)
     last_seen = models.IntegerField(default=0)
     timezone = models.IntegerField(default=0)
-    url = models.CharField(blank=True, max_length=25)
+    url = models.CharField(blank=True, null=True, max_length=25)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
