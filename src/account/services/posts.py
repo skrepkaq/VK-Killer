@@ -3,7 +3,7 @@ import re
 import datetime
 from django.db.models import Count, Value, Q
 from channels.db import database_sync_to_async
-from account.models import Account, Comment, Post
+from account.models import Account, Comment, Post, BanWord
 from account.services import images, friends, online
 
 path = 'media/images/'
@@ -77,6 +77,9 @@ def create(request) -> bool:
                 if not filename:
                     return False
                 image_fin_str = 'images/' + filename
+            else:
+                if not message or all([s == ' ' for s in message]):
+                    return False
             Post.objects.create(user=request.user, message=message, image=image_fin_str)
             return True
 
@@ -141,9 +144,15 @@ def _get_random_posts(user: Account, count: int, in_last: int = None) -> list[Po
     Возвращает count или меньше случайных постов за последние in_last дней
     (исключая посты от user и от скрытых пользователей)
     '''
-    posts = Post.objects.filter(~Q(user=user) & Q(user__is_hidden_from_feed=False)
-                                & ~Q(message__contains='arabistanlegion'))\
+
+    posts = Post.objects.filter(~Q(user=user) & Q(user__is_hidden_from_feed=False))\
                         .annotate(is_random_post=Value(True)).order_by('?')
+
+    banwords = BanWord.objects.all()
+    if banwords:
+        banwords_re = f'({"|".join([w.word for w in banwords])})'
+        posts = posts.exclude(message__regex=banwords_re)
+
     if in_last:
         time_threshold = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=in_last)
         posts = posts.filter(timestamp__gt=time_threshold)

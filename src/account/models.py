@@ -95,3 +95,10 @@ class Comment(models.Model):
     message = models.CharField(max_length=500)
     timestamp = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(Account, blank=True)
+
+
+class BanWord(models.Model):
+    word = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return self.word
