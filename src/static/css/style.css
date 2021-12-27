@@ -391,7 +391,6 @@ nav a {
     width: 100vw;
     height: 100vh;
     display: grid;
-    column-gap: 10px;
     grid-template-rows: auto 1fr;
 }
 
@@ -448,4 +447,32 @@ nav a {
     height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+.feed-buttons-container {
+    display: flex;
+    justify-content: center;
+    column-gap: 10px;
+}
+
+.feed-mode-button {
+    font-family: 'Murecho', sans-serif;
+    font-size: 17px;
+    background-color: #e7e7e7;
+    border: none;
+    color: black;
+    padding: 10px 22px;
+    cursor: pointer;
+}
+
+.feed-mode-button.selected {
+    background-color: #4CAF50;
+    color: white;
+}
+
+@media (max-width: 450px) {
+    .feed-mode-button {
+        font-size: 15px;
+        padding: 10px 5px;
+    }
 }

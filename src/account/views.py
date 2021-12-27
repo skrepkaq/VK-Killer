@@ -148,5 +148,5 @@ def post_view(request, id):
 
 @login_required(login_url='login')
 def feed_view(request):
-    context = {'posts_info': {'id': request.user.id, 'type': 'feed'}}
+    context = {'posts_info': {'id': request.user.id, 'type': 'feed', 'mode': 0}}
     return render(request, 'feed.html', context)

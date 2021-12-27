@@ -4,12 +4,14 @@ const box = document.querySelector('#posts-box')
 const ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 const posts_socket = new WebSocket(`${ws_scheme}://${window.location.host}/ws/posts/`);
 const staticUrl = '/static'
+const feedModes = ['От&nbsp;друзей', 'Популярные', 'Случайные']
 
 var box_max_scroll
 var endOfPosts
 var requestedMorePosts
+var isButtonsRendered
 var posts = []
-
+var DOMModeBtns;
 
 posts_socket.onmessage = (e) => {
     const data = JSON.parse(e.data);
@@ -41,7 +43,7 @@ if (sourse_info.type != 'post') {
             а так же переписка прокручена вверх больше чем на 200 пикселей -
             запросить более старых сообщений
             */
-            sendPostsRequest(sourse_info, posts.length > 0 ? posts[posts.length-1].id : -1)
+            sendPostsRequest(sourse_info, posts.length > 0 ? (sourse_info.mode == 1 ? posts.length : posts[posts.length-1].id) : -1)
             requestedMorePosts = true;
         }
     })
@@ -86,6 +88,26 @@ const sendAction = (action, contentType, contentID, e=null) => {
 
 
 const showNewPosts = (newPosts) => {
+    if (!isButtonsRendered && sourse_info.type == 'feed') {
+        let feedModeButtons = ''
+        for (let i in feedModes) {
+            feedModeButtons += `<button name="action" class="feed-mode-button${sourse_info.mode == i ? ' selected': ''}">${feedModes[i]}</button>`
+        }
+        box.insertAdjacentHTML('beforeend', `<div class="feed-buttons-container">${feedModeButtons}</div>`)
+        
+        DOMModeBtns = document.getElementsByClassName("feed-mode-button")
+        for (let i = 0; i < DOMModeBtns.length; i++) {
+            DOMModeBtns[i].addEventListener("click", () => {
+                sourse_info.mode = i
+                isButtonsRendered = false;
+                endOfPosts = false;
+                box.innerHTML = ''
+                posts = []
+                sendPostsRequest(sourse_info, sourse_info.mode == 1 ? posts.length : -1)
+            })
+        }
+        isButtonsRendered = true;
+    }
     // выводит новые посты на страницу 
     for (let i = 0; i < newPosts.length; i++) {
         let post = newPosts[i]
