@@ -39,7 +39,7 @@ def get_last_seen_info(user: Account, profile_user: Account) -> str:
     if profile_user.last_seen == -1: return 'Online'
     offline_time = time.time() - profile_user.last_seen
     if offline_time < 300: return 'Был в сети только что'
-    if offline_time < 3600: return f'Был в сети {int(offline_time//60)} минут назад'
+    if offline_time < 3600 or user.is_anonymous: return f'Был в сети {int(offline_time//60)} минут назад'
 
     t = datetime.fromtimestamp(profile_user.last_seen, timezone(-timedelta(minutes=user.timezone)))
     tnow = datetime.fromtimestamp(time.time(), timezone(-timedelta(minutes=user.timezone)))
