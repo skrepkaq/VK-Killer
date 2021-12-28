@@ -26,7 +26,7 @@ def get(user: Account, sourse_info: dict, last_post_id: int) -> list[dict]:
         feed_mode = sourse_info["mode"]
         posts = _get_feed_posts(user, last_post_id, feed_mode, num)
 
-    out_posts = _serialize_posts(posts, user.timezone, sourse_info["type"] != 'post')
+    out_posts = _serialize_posts(posts, user.timezone if user.is_authenticated else 0, sourse_info["type"] != 'post')
     return out_posts
 
 
