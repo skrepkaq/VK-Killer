@@ -17,6 +17,7 @@ def get_user(id: int) -> Account:
 @database_sync_to_async
 def get_or_create_dm(user: Account, profile_user: Account) -> Dm:
     '''Возвращает переписку, если её нет, создаёт'''
+    if user == profile_user: raise Exception('You can\'t write to yourself')
     dm = Dm.objects.filter(users__in=[user, profile_user])\
                    .annotate(num_users=Count('users')).filter(num_users=2)
 
