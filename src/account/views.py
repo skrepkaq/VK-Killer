@@ -103,7 +103,7 @@ def friends_view(request, slug):
 
     is_my_friends = request.user == profile_user
     users = friends.get(profile_user, not is_my_friends)  # Если профиль мой - кроме друзей показать заявки в друзья
-    users.sort(key=lambda x: x["is_accepted"], reverse=True)  # Заявки в друзья выше - друзья ниже
+
     context = {'users': users, 'my': is_my_friends, 'profile_user': profile_user}
     return render(request, 'friends.html', context)
 
