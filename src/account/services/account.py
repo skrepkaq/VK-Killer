@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
 from account.forms import AccountCreateForm
+from account.captcha import validate_captcha
 
 
 def create(request) -> tuple[AccountCreateForm, bool]:
@@ -10,6 +11,10 @@ def create(request) -> tuple[AccountCreateForm, bool]:
     Возвращает форму и True если аккаунт создан успешно
     '''
     form = AccountCreateForm(request.POST)
+
+    if not validate_captcha(request):
+        messages.error(request, "Пройдите капчу")
+        return
 
     is_created = False
     if form.is_valid():
@@ -24,6 +29,10 @@ def create(request) -> tuple[AccountCreateForm, bool]:
 
 def login(request) -> bool:
     '''Если есть аккаут с такими данными, логин и True'''
+    if not validate_captcha(request):
+        messages.error(request, "Пройдите капчу")
+        return
+
     email = request.POST['username']
     raw_password = request.POST['password']
     user = authenticate(email=email, password=raw_password)

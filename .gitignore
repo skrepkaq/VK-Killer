@@ -6,3 +6,4 @@ __pycache__/
 !**/avatars/template.png
 */media/images/
 *.sqlite3
+.env

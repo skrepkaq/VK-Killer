@@ -6,20 +6,21 @@ Login page
 
 {% block body %}
 <section class="auth_form">
-    <h2>Welcome to the club, buddy!</h2>
+    <h2>Добро пожаловать в VK-Killer!</h2>
     <form method="POST" action="">
         {% csrf_token %}
         {{form.username}}
         {{form.password}}
         <input type="submit" value="Login">
+        {% if messages %}
+        <p class="error">
+            {% for msg in messages %}
+            <a>{{msg}}</a>
+            {% endfor %}
+        </p>
+        {% endif %}
+        <p>Ещё нет аккаунта? <a href="../register">Зарегистрируйтесь</a> сейчас!</p>
+        {{captcha}}
     </form>
-    {% if messages %}
-    <p class="error">
-        {% for msg in messages %}
-        <a>{{msg}}</a>
-        {% endfor %}
-    </p>
-    {% endif %}
-    <p>Don't have an account? <a href="../register">Register</a> now!</p>
 </section>
 {% endblock %}

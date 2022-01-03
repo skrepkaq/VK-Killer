@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import AccountCreateForm, AccountLoginForm
 from .services import account, profile, dms, friends, search, posts, account_settings, avatar, online
 from .decorators import unauth_user
+from .captcha import FormWithCaptcha
 
 
 @unauth_user
@@ -15,7 +16,7 @@ def register_view(request):
         if is_created:
             return redirect('home')
 
-    context = {'form': form}
+    context = {'form': form, 'captcha': FormWithCaptcha}
     return render(request, 'register.html', context)
 
 
@@ -24,7 +25,7 @@ def login_view(request):
     form = AccountLoginForm()
     if request.method == 'POST' and account.login(request):
         return redirect('home')
-    context = {'form': form}
+    context = {'form': form, 'captcha': FormWithCaptcha}
     return render(request, 'login.html', context)
 
 

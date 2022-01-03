@@ -21,6 +21,14 @@ class AccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def get_queryset(self):
+        return super(AccountManager, self).get_queryset().filter(is_active=True)
+
+
+class AccountManagerALL(models.Manager):
+    def get_query_set(self):
+        return super(AccountManagerALL, self).get_query_set()
+
 
 class Account(AbstractBaseUser):
     email = models.EmailField(max_length=60, unique=True)
@@ -41,6 +49,7 @@ class Account(AbstractBaseUser):
     REQUIRED_FIELDS = ['username']
 
     objects = AccountManager()
+    objects_all = AccountManagerALL()
 
     def save(self, *args, **kwargs):
         if not self.avatar:

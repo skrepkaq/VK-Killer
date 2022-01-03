@@ -168,7 +168,8 @@ def _get_trending_posts(loaded_posts_count: int, count: int, in_last: int = None
     '''
     time_threshold = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=in_last)
     posts = Post.objects.filter(Q(user__is_hidden_from_feed=False)
-                                & Q(timestamp__gt=time_threshold)).annotate(l_count=Count('likes'))\
+                                & Q(timestamp__gt=time_threshold)
+                                & Q(user__is_hidden_from_feed=False)).annotate(l_count=Count('likes'))\
                         .annotate(is_random_post=Value(False)).order_by('-l_count')
     posts = posts[loaded_posts_count:]
     return _get_only_lt_id(posts, -1, count)

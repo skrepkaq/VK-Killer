@@ -6,7 +6,7 @@ Register page
 
 {% block body %}
 <section class="auth_form">
-    <h2>Welcome to the club, buddy!</h2>
+    <h2>Добро пожаловать в VK-Killer!</h2>
     <form method="POST" action="">
         {% csrf_token %}
         {{form.username}}
@@ -14,16 +14,17 @@ Register page
         {{form.password1}}
         {{form.password2}}
         <input type="submit" value="Register">
-    </form>
-    {% if form.errors %}
-    <div class="error">
-        {% for field in form %}
-            {% for error in field.errors %}
-                <strong>{{ error|escape }}</strong><br>
+        {% if form.errors %}
+        <div class="error">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <strong>{{ error|escape }}</strong><br>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
-    </div>
-    {% endif %}
-    <p>Already have an account? <a href="../login">Log in</a> now!</p>
+        </div>
+        {% endif %}
+        <p>Уже есть аккаунт? <a href="../login">Войдите</a> сейчас!</p>
+        {{captcha}}
+    </form>
 </section>
 {% endblock %}
