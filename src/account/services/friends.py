@@ -1,4 +1,4 @@
-from random import sample
+from django.db.models import Count
 from account.models import Friend, Account
 
 
@@ -9,11 +9,11 @@ def get(user: Account, only_accepted: bool) -> list[Account]:
     '''
     users = []
     for offer in user.friend_offers.all():
+        is_accepted = offer.users_accepted.count() == 2
+        if not is_accepted and only_accepted: continue
         friend = _get_other_from_offer(user, offer)
-        accepted = offer.users_accepted.all()
-        is_accepted = len(accepted) == 2
-        if is_accepted or (not only_accepted and user not in accepted):
-            # заявка принята, либо не only_accepted и заявка отправлена мне, а не мною
+        if is_accepted or (user not in offer.users_accepted.all()):
+            # заявка принята, либо заявка отправлена мне, а не мною
             users.append({'user': friend,
                           'is_accepted': is_accepted})
     return users
@@ -26,9 +26,9 @@ def get_my_offers(user: Account) -> list[Account]:
 
 def get_random_accepted(user: Account, k: int) -> list[Account]:
     '''Возвращает k случайных принятых заявок в друзья и общее количество друзей'''
-    users = [u["user"] for u in get(user, True)]
-    if len(users) < k: k = len(users)
-    return sample(users, k=k), len(users)
+    users = user.friend_offers.annotate(num_users=Count('users_accepted')).filter(num_users=2).order_by('?')
+    num = len(users)
+    return [_get_other_from_offer(user, users[i]) for i in range(k if num > k else num)], num
 
 
 def _get_other_from_offer(user: Account, offer: Friend) -> Account:
