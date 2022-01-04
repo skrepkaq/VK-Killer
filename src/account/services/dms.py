@@ -11,7 +11,7 @@ def get_with_message(user: Account) -> list[dict]:
     for dm in dms:
         dm_user = _get_dm_user(user, dm)
         msg = _get_last_message(dm)
-        if not msg: continue
+        if not msg or not dm_user: continue
 
         dms_with_msg.append({'user': {'id': dm_user.id,
                                       'username': dm_user.username,
