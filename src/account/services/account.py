@@ -2,6 +2,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
 from account.forms import AccountCreateForm
+from django.db.models import Q
+from account.models import Account
 from account.captcha import validate_captcha
 
 
@@ -12,18 +14,25 @@ def create(request) -> tuple[AccountCreateForm, bool]:
     '''
     form = AccountCreateForm(request.POST)
 
+    is_created = False
     if not validate_captcha(request):
         messages.error(request, "Пройдите капчу")
-        return
+        return form, is_created
 
-    is_created = False
     if form.is_valid():
-        form.save()
-        email = form.cleaned_data.get('email')
-        raw_password = form.cleaned_data.get('password1')
-        user = authenticate(email=email, password=raw_password)
-        auth_login(request, user)
-        is_created = True
+        if Account.objects.filter(
+            Q(username__iexact=request.POST['username'])
+            | Q(email__iexact=request.POST['email'])
+        ):
+            messages.error(request, "Аккаунт с таким ником или почтой уже существует")
+            print('nope')
+        else:
+            form.save()
+            email = form.cleaned_data.get('email')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(email=email, password=raw_password)
+            auth_login(request, user)
+            is_created = True
     return form, is_created
 
 

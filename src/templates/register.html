@@ -23,6 +23,13 @@ Register page
             {% endfor %}
         </div>
         {% endif %}
+        {% if messages %}
+        <p class="error">
+            {% for msg in messages %}
+            <a>{{msg}}</a>
+            {% endfor %}
+        </p>
+        {% endif %}
         <p>Уже есть аккаунт? <a href="../login">Войдите</a> сейчас!</p>
         {{captcha}}
     </form>
