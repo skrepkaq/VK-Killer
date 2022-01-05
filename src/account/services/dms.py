@@ -1,6 +1,6 @@
-import time
 from channels.db import database_sync_to_async
 from account.models import Account, Dm, Message
+from account.services import online
 
 
 def get_with_message(user: Account) -> list[dict]:
@@ -19,7 +19,7 @@ def get_with_message(user: Account) -> list[dict]:
                                       'avatar': dm_user.avatar.url},
                              'message': {'id': msg.id,
                                          'username': msg.user.username,
-                                         'time': time.strftime("%H:%M", msg.timestamp.timetuple()),
+                                         'time': online.convert_datetime_to_str(msg.timestamp, user.timezone),
                                          'content': msg.message,
                                          'read': msg.read}})
     return dms_with_msg
