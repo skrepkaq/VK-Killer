@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}
+Сбросить пароль
+{% endblock %}
+
+
+{% block body %}
+<section class="auth_form">
+    <form method="POST">
+        {% csrf_token %}
+        <input type="email" name="email" autocomplete="email" placeholder="email" maxlength="254" required="">
+        <div class="form-group">
+            <button type="submit">Сбросить пароль</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

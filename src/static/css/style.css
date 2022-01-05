@@ -408,7 +408,7 @@ nav a {
         grid-template-rows: auto auto auto;
         grid-template-columns: 1fr 1fr;
     }
-    .posts {
+    .profile-container .posts {
         flex-direction: column;
         grid-column: 1 / span 2;
         grid-row-start: 3;
@@ -475,4 +475,10 @@ nav a {
         font-size: 15px;
         padding: 10px 5px;
     }
+}
+
+.login-btn-box {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
 }

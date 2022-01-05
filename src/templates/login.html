@@ -11,7 +11,7 @@ Login page
         {% csrf_token %}
         {{form.username}}
         {{form.password}}
-        <input type="submit" value="Login">
+        <div class="login-btn-box"><input type="submit" value="Login"><a href="/password-reset">Забыли пароль?</a></div>
         {% if messages %}
         <p class="error">
             {% for msg in messages %}

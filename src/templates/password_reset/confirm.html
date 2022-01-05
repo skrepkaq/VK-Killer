@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}
+Новый пароль
+{% endblock %}
+
+
+{% block body %}
+<section class="auth_form">
+    {% if form %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="password" name="new_password1" placeholder="Пароль" autocomplete="new-password" required="" aria-autocomplete="list">
+            <input type="password" name="new_password2" placeholder="Подтверждение пароля" autocomplete="new-password" required="">
+            <div class="form-group">
+                <button type="submit">Применить пароль</button>
+            </div>
+        </form>
+        {% if form.errors %}
+        <div class="error">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <strong>{{ error|escape }}</strong><br>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% else %}
+        Вероятно ссылка для восстановления пароля устарела. Запросите новую
+    {% endif %}
+</section>
+{% endblock %}
