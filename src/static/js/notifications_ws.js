@@ -1,4 +1,5 @@
 messageSnd = new Audio(`${window.location.origin}/static/sounds/message.ogg`)
+messageSnd.volume = 0.15
 const myID = JSON.parse(document.getElementById('myID').textContent);
 const navbarMessages = document.querySelector('#navbar-messages')
 const notificationsSocket = new WebSocket(`${window.location.protocol == "https:" ? "wss" : "ws"}://${window.location.host}/ws/notifications/`);
