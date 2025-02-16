@@ -1,5 +1,5 @@
 import time
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, date
 from channels.db import database_sync_to_async
 from account.models import Account
 
@@ -49,9 +49,13 @@ def get_last_seen_info(user: Account, profile_user: Account) -> str:
     else:
         day = t.strftime('%d %b')
     h_m = t.strftime('%H:%M')
-    return f'Был в сети {day} {h_m}'
+    year = t.strftime('%Y') if t.year != date.today().year else ''
+    return f'Был в сети {day} {h_m} {year}'
 
 
 def convert_datetime_to_str(dt: datetime, tz: int) -> str:
     '''Конвертирует datetime во время с учётом часового пояса'''
-    return dt.astimezone(tz=timezone(-timedelta(minutes=tz))).strftime('%H:%M %d %b')
+    date_format = '%H:%M %d %b'
+    if dt.year != date.today().year:
+        date_format += ' %Y'
+    return dt.astimezone(tz=timezone(-timedelta(minutes=tz))).strftime(date_format)
