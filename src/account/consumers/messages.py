@@ -51,6 +51,7 @@ class MessagesConsumer(AsyncWebsocketConsumer):
         elif data['type'] == 'message':
             content = data['content']
             if not content or all([s == ' ' for s in content]): return  # пустое сообщение
+            if len(content) > 5000: return
 
             raw_msg = await messages.create(self.user, self.dm, content)
             msg = await self.serialize_messages([raw_msg], self.profile_user.timezone)

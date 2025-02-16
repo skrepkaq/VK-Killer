@@ -63,7 +63,7 @@
             <form method="POST" enctype="multipart/form-data" class="full">
                 {% csrf_token %}
                 <a>Опубликовать новый пост</a>
-                <input type="text" name="message" placeholder="Сообщение">
+                <input type="text" name="message" placeholder="Сообщение" maxlength="5000">
                 <input id="photo_input" type="file" name="image" style="display: none">
                 <button type="submit" name="action" value="create_post">Опубликовать</button>
                 <label for="photo_input"><img class="avatar small" src="{% static 'images/image.png' %}"><br>Добавить фото (не больше 20МБ)</label>

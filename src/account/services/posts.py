@@ -1,5 +1,4 @@
 import os
-import re
 import datetime
 from django.db.models import Count, Value, Q
 from channels.db import database_sync_to_async
@@ -80,6 +79,8 @@ def create(request) -> bool:
             else:
                 if not message or all([s == ' ' for s in message]):
                     return False
+                if len(message) > 5000:
+                    return False
             Post.objects.create(user=request.user, message=message, image=image_fin_str)
             return True
 
@@ -92,7 +93,7 @@ def send_comment(request, post_id: int) -> bool:
         if request.POST['action'] == "send_comment":
             message = request.POST.get('message')
             post = _get_by_id(post_id, Post)
-            if re.fullmatch(r'.{1,200}', message) and not all([s == ' ' for s in message]) and post:
+            if message and len(message) <= 1000 and not all([s == ' ' for s in message]) and post:
                 try:
                     comm = post.comments.all().latest('pk')
                     if comm.user == request.user and comm.message == message: return

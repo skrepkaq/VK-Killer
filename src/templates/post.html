@@ -12,7 +12,7 @@
 {% if user.is_authenticated %}
 <form class="comment-form" method="POST" action="">
     {% csrf_token %}
-    <input type="text" name="message" required autocomplete="off" size=50 placeholder="Комментарий">
+    <input type="text" name="message" required autocomplete="off" size=50 placeholder="Комментарий" maxlength="1000">
     <button type="submit" name="action" value="send_comment">Отправить</button>
 </form>
 {% endif %}
