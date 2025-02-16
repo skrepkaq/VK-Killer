@@ -1,0 +1,29 @@
+services:
+  web:
+    build: .
+    container_name: vk-killer
+    env_file: .env
+    depends_on:
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=social.settings
+    volumes:
+      - ./src:/app
+      - ./logs:/var/log
+    restart: unless-stopped
+  redis:
+    image: redis
+    container_name: vk-killer-redis
+    restart: unless-stopped
+  nginx:
+    image: nginx:alpine
+    container_name: vk-killer-nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./src/static:/usr/share/nginx/static:ro
+      - ./src/media:/usr/share/nginx/media:ro
+    ports:
+      - "8000:80"
+    depends_on:
+      - web
+    restart: unless-stopped

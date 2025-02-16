@@ -9,7 +9,7 @@
 
 [Redis](https://redis.io/) для работы Django Channels в async режиме
 
-А так же [Docker](https://www.docker.com/) для запуска Redis
+А так же [Docker](https://www.docker.com/)
 
 
 ## Установка
@@ -30,14 +30,9 @@ python manage.py migrate
 
 ## Использование
 
-1. Запустите Redis с помощью Docker
+1. Запустите сервер с помощью Docker
 ```bash
-docker-compose up
+docker compose up -d
 ```
-2. Запустите сервер:
-
-```bash
-python manage.py runserver
-```
-3. Заходите на [http://localhost:8000](http://localhost:8000)
-4. Profit!
+2. Заходите на [http://localhost:8000](http://localhost:8000)
+3. Profit!
