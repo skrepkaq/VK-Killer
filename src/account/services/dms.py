@@ -20,7 +20,7 @@ def get_with_message(user: Account) -> list[dict]:
                              'message': {'id': msg.id,
                                          'username': msg.user.username,
                                          'time': online.convert_datetime_to_str(msg.timestamp, user.timezone),
-                                         'content': msg.message,
+                                         'content': msg.message[:250],
                                          'read': msg.read}})
     return dms_with_msg
 
