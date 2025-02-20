@@ -35,3 +35,14 @@ def change_url(request) -> bool:
             request.user.url = url
             request.user.save()
             return True
+
+def change_feed_position(request) -> bool:
+    '''Изменяет позицию ленты пользователя, при попытке возвращает True'''
+    if request.method == 'POST':
+        if request.POST["action"] == 'change_feed_position':
+            feed_position = request.POST["feed_position"]
+            if feed_position not in ['w', 'l', 'c', 'r']:
+                raise ValueError('Такая позиция ленты невозможна')
+            request.user.feed_position = feed_position
+            request.user.save()
+            return True
