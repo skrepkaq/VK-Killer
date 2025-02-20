@@ -44,6 +44,7 @@ class Account(AbstractBaseUser):
     last_seen = models.IntegerField(default=0)
     timezone = models.IntegerField(default=0)
     url = models.CharField(blank=True, null=True, max_length=25)
+    feed_position = models.CharField(max_length=1, default='w')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
