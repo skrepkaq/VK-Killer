@@ -82,6 +82,7 @@ img.avatar.tiny {
 .timestamp {
     font-size: 0.7em;
     color: #00000055 !important;
+    word-break: normal;
 }
 
 #msgs-table {
@@ -247,6 +248,7 @@ img.avatar.tiny {
     flex-direction: row;
     align-items: flex-start;
     column-gap: 5px;
+    word-break: break-word;
 }
 .post-container .like form {
     display: block;
