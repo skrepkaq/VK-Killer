@@ -8,7 +8,7 @@
 {% block body %}
 <div id="feed-container">
     {% include "navbar.html" %}
-    <div class="posts posts-feed" style="overflow-y: scroll" id="posts-box">
+    <div class="posts posts-feed posts-position-{{posts_position}}" style="overflow-y: scroll" id="posts-box">
     </div>
 </div>
 {{ posts_info|json_script:"posts_info" }}

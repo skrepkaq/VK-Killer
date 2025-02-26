@@ -180,6 +180,26 @@ img.avatar.tiny {
     padding: 10px;
 }
 
+.posts-feed.posts-position-l,
+.posts-feed.posts-position-r,
+.posts-feed.posts-position-c {
+    width: 100%;
+    max-width: 680px;
+}
+
+.posts-feed.posts-position-l {
+    margin-right: auto;
+}
+
+.posts-feed.posts-position-r {
+    margin-left: auto;
+}
+
+.posts-feed.posts-position-c {
+    margin-right: auto;
+    margin-left: auto;
+}
+
 .new-post {
     align-self: flex-end;
 }

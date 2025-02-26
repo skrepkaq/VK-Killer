@@ -127,13 +127,21 @@ def settings_view(request):
     except ValueError as e:
         is_url_changed = False
         url_change_error = e
+        
+    feed_position_change_error = None
+    try:
+        is_feed_position_changed = account_settings.change_feed_position(request)
+    except ValueError as e:
+        is_feed_position_changed = False
+        feed_position_change_error = e
 
-    if is_password_changed or is_avatar_updated or is_url_changed:
+    if is_password_changed or is_avatar_updated or is_url_changed or is_feed_position_changed:
         return redirect('settings')
 
     context = {'password_form': password_form if request.method == 'POST'
                and request.POST["action"] == 'change_password' else None,
-               'url_change_error': url_change_error}
+               'url_change_error': url_change_error,
+               'feed_position_change_error': feed_position_change_error}
     return render(request, 'settings.html', context)
 
 
@@ -149,5 +157,5 @@ def post_view(request, id):
 
 @login_required(login_url='login')
 def feed_view(request):
-    context = {'posts_info': {'id': request.user.id, 'type': 'feed', 'mode': 0}}
+    context = {'posts_info': {'id': request.user.id, 'type': 'feed', 'mode': 0}, 'posts_position': request.user.feed_position}
     return render(request, 'feed.html', context)

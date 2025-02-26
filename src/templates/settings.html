@@ -61,6 +61,35 @@
                 {% endif %}
             </form>
         </div>
+        <div class="feed-position-change padd-top" style="padding-top: 70px">
+            <p>Изменить расположение ленты</p>
+            <form method="POST" action="" style="margin-top: 5px;">
+                {% csrf_token %}
+                <label for="id_feed_position_left">
+                    <input type="radio" name="feed_position" value="l" id="id_feed_position_left" {% if user.feed_position == 'l' %}checked{% endif %}>
+                    <span>Слева</span>
+                </label>
+                <label for="id_feed_position_center">
+                    <input type="radio" name="feed_position" value="c" id="id_feed_position_center" {% if user.feed_position == 'c' %}checked{% endif %}>
+                    <span>По центру</span>
+                </label>
+                <label for="id_feed_position_right">
+                    <input type="radio" name="feed_position" value="r" id="id_feed_position_right" {% if user.feed_position == 'r' %}checked{% endif %}>
+                    <span>Справа</span>
+                </label>
+                <label for="id_feed_position_width">
+                    <input type="radio" name="feed_position" value="w" id="id_feed_position_width" {% if user.feed_position == 'w' %}checked{% endif %}>
+                    <span>По ширине</span>
+                </label>
+                <button type="submit" name="action" value="change_feed_position">Применить</button>
+                {% if feed_position_change_error %}
+                <div class="error">
+                    <strong>{{ feed_position_change_error }}</strong><br>
+                </div>
+                {% endif %}
+            </form>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
