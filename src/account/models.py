@@ -94,7 +94,7 @@ class Post(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='posts')
     message = models.CharField(max_length=500, blank=True)
     image = models.ImageField(upload_to='images', blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     likes = models.ManyToManyField(Account, blank=True, related_name='liked_posts')
 
 
