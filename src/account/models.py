@@ -41,6 +41,7 @@ class Account(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_hidden_from_feed = models.BooleanField(default=False)
+    is_banned = models.BooleanField(default=False)
     last_seen = models.IntegerField(default=0)
     timezone = models.IntegerField(default=0)
     url = models.CharField(blank=True, null=True, max_length=25)

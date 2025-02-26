@@ -16,7 +16,7 @@ def get(user: Account, sourse_info: dict, last_post_id: int) -> list[dict]:
     num = 10 if last_post_id > 1 else 15  # Количество постов загружаемых за раз, в первый раз
 
     if sourse_info["type"] == 'profile':
-        posts = _get_profile_posts(sourse_info["id"], last_post_id, num)
+        posts = _get_profile_posts(sourse_info["id"], last_post_id, num, user)
 
     elif sourse_info["type"] == 'post':
         posts = _get_post(sourse_info["id"])
@@ -25,7 +25,12 @@ def get(user: Account, sourse_info: dict, last_post_id: int) -> list[dict]:
         feed_mode = sourse_info["mode"]
         posts = _get_feed_posts(user, last_post_id, feed_mode, num)
 
-    out_posts = _serialize_posts(posts, user.timezone if user.is_authenticated else 0, sourse_info["type"] != 'post')
+    out_posts = _serialize_posts(
+        posts,
+        user.timezone if user.is_authenticated else 0,
+        sourse_info["type"] != 'post',
+        user
+    )
     return out_posts
 
 
@@ -34,11 +39,14 @@ def _get_post(post_id: int) -> Post:
     return Post.objects.filter(pk=post_id).annotate(is_random_post=Value(False))
 
 
-def _get_profile_posts(profile_id: int, last_post_id: int, num: int) -> list[Post]:
+def _get_profile_posts(profile_id: int, last_post_id: int, num: int, user: Account) -> list[Post]:
     '''Возвращает посты пользователя'''
     profile = Account.objects.get(pk=profile_id)
 
-    posts = profile.posts.all().annotate(is_random_post=Value(False)).order_by('-id')
+    posts = profile.posts.all()
+    if profile.is_banned and profile != user:
+        return []
+    posts = posts.annotate(is_random_post=Value(False)).order_by('-id')
     return _get_only_lt_id(posts, last_post_id, num)
 
 
@@ -51,7 +59,7 @@ def _get_feed_posts(user: Account, last_post_id: int, mode: int, num: int):
         posts += _get_random_posts(user, (num-len(posts) if len(posts) < num else 3), 14)
     elif mode == 1:
         # лента из популярных постов за последние 3 дня
-        posts = _get_trending_posts(last_post_id, num, 3)
+        posts = _get_trending_posts(last_post_id, num, 3, user)
     elif mode == 2:
         # лента из случайных постов за последние 14 дней
         posts = _get_random_posts(user, num, 14)
@@ -145,9 +153,11 @@ def _get_random_posts(user: Account, count: int, in_last: int = None) -> list[Po
     Возвращает count или меньше случайных постов за последние in_last дней
     (исключая посты от user и от скрытых пользователей)
     '''
-
-    posts = Post.objects.filter(~Q(user=user) & Q(user__is_hidden_from_feed=False))\
-                        .annotate(is_random_post=Value(True)).order_by('?')
+    posts = Post.objects.filter(
+        ~Q(user=user) 
+        & Q(user__is_hidden_from_feed=False)
+        & (~Q(user__is_banned=True) | Q(user=user))
+    ).annotate(is_random_post=Value(True)).order_by('?')
 
     banwords = BanWord.objects.all()
     if banwords:
@@ -162,16 +172,18 @@ def _get_random_posts(user: Account, count: int, in_last: int = None) -> list[Po
     return posts[:count]
 
 
-def _get_trending_posts(loaded_posts_count: int, count: int, in_last: int = None) -> list[Post]:
+def _get_trending_posts(loaded_posts_count: int, count: int, in_last: int, user: Account) -> list[Post]:
     '''
     Возвращает посты за последние in_last дней, с индеком
     больше loaded_posts_count и сортирует их по лайкам
     '''
     time_threshold = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=in_last)
-    posts = Post.objects.filter(Q(user__is_hidden_from_feed=False)
-                                & Q(timestamp__gt=time_threshold)
-                                & Q(user__is_hidden_from_feed=False)).annotate(l_count=Count('likes'))\
-                        .annotate(is_random_post=Value(False)).order_by('-l_count')
+    posts = Post.objects.filter(
+        Q(user__is_hidden_from_feed=False)
+        & Q(timestamp__gt=time_threshold)
+        & (~Q(user__is_banned=True) | Q(user=user))
+    ).annotate(l_count=Count('likes'))\
+    .annotate(is_random_post=Value(False)).order_by('-l_count')
     posts = posts[loaded_posts_count:]
     return _get_only_lt_id(posts, -1, count)
 
@@ -184,11 +196,13 @@ def _get_only_lt_id(posts: list[Post], last_post_id: int, num: int) -> list[Post
     return posts[:num]
 
 
-def _serialize_posts(psts: list[Post], tz: int, only_top_comment: bool) -> list[dict]:
+def _serialize_posts(psts: list[Post], tz: int, only_top_comment: bool, user: Account) -> list[dict]:
     '''Подготавливает посты с комментариями для отправки по ws'''
     out_posts = []
     for p in psts:
         comments = p.comments.all()
+        if user != p.user:
+            comments = comments.filter(~Q(user__is_banned=True) | Q(user=user))
         comments_count = len(comments)
 
         if comments and only_top_comment:
