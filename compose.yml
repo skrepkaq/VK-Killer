@@ -23,6 +23,7 @@ services:
       - POSTGRES_DB=vkkiller
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: unless-stopped
   nginx:
     image: nginx:alpine
     container_name: vk-killer-nginx
