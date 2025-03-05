@@ -83,7 +83,7 @@ class Dm(models.Model):
 class Message(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='messages')
     dm = models.ForeignKey(Dm, on_delete=models.CASCADE, related_name='messages')
-    message = models.CharField(max_length=500)
+    message = models.CharField(max_length=5000)
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
 
@@ -93,7 +93,7 @@ class Message(models.Model):
 
 class Post(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='posts')
-    message = models.CharField(max_length=500, blank=True)
+    message = models.CharField(max_length=5000, blank=True)
     image = models.ImageField(upload_to='images', blank=True)
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     likes = models.ManyToManyField(Account, blank=True, related_name='liked_posts')
@@ -102,7 +102,7 @@ class Post(models.Model):
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='liked_comments')
-    message = models.CharField(max_length=500)
+    message = models.CharField(max_length=1000)
     timestamp = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(Account, blank=True)
 

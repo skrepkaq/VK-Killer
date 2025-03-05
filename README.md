@@ -24,7 +24,6 @@ pip install -r requirements.txt
 ```
 4. Мигрируйте базу данных с помощью файла **manage.py** из директории **src** ***(следует делать после каждого нового коммита)***
 ```bash
-python manage.py makemigrations
 python manage.py migrate
 ```
 
